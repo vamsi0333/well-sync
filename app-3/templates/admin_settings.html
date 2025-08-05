@@ -1,0 +1,55 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="w-full min-h-screen px-0 sm:px-4 md:px-8 lg:px-16 xl:px-32 py-8">
+  <div class="bg-primary rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in mb-8">
+    <div class="flex-shrink-0 text-5xl">⚙️</div>
+    <div class="flex-1">
+      <h1 class="text-3xl font-extrabold text-white mb-1">System Settings</h1>
+      <p class="text-lg text-white/90">Configure ticket categories, escalation rules, and other system settings.</p>
+    </div>
+  </div>
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 max-w-2xl mx-auto mb-8">
+    <form method="post" action="/admin/settings">
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-primary mb-2">Ticket Categories</label>
+        <ul class="space-y-2 mb-2">
+          <li class="flex items-center gap-2">
+            <input type="text" value="Payroll" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 w-1/2" disabled />
+            <button type="button" class="px-3 py-1 rounded-lg bg-red-500 text-white font-bold shadow hover:bg-red-600 transition">Delete</button>
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="text" value="Benefits" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 w-1/2" disabled />
+            <button type="button" class="px-3 py-1 rounded-lg bg-red-500 text-white font-bold shadow hover:bg-red-600 transition">Delete</button>
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="text" value="Workplace" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 w-1/2" disabled />
+            <button type="button" class="px-3 py-1 rounded-lg bg-red-500 text-white font-bold shadow hover:bg-red-600 transition">Delete</button>
+          </li>
+        </ul>
+        <div class="flex gap-2">
+          <input type="text" placeholder="Add new category" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 flex-1" />
+          <button type="button" class="px-4 py-2 rounded-lg bg-primary text-white font-bold shadow hover:bg-accent transition">Add</button>
+        </div>
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-primary mb-2">Escalation Rules</label>
+        <ul class="space-y-2 mb-2">
+          <li class="flex items-center gap-2">
+            <input type="text" value="Severe: Escalate to HR immediately" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 w-2/3" disabled />
+            <button type="button" class="px-3 py-1 rounded-lg bg-red-500 text-white font-bold shadow hover:bg-red-600 transition">Delete</button>
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="text" value="Mild: Escalate if unresolved in 3 days" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 w-2/3" disabled />
+            <button type="button" class="px-3 py-1 rounded-lg bg-red-500 text-white font-bold shadow hover:bg-red-600 transition">Delete</button>
+          </li>
+        </ul>
+        <div class="flex gap-2">
+          <input type="text" placeholder="Add new rule" class="rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 flex-1" />
+          <button type="button" class="px-4 py-2 rounded-lg bg-primary text-white font-bold shadow hover:bg-accent transition">Add</button>
+        </div>
+      </div>
+      <button type="submit" class="px-6 py-3 rounded-lg bg-primary text-white font-bold shadow hover:bg-accent transition-all">Save Settings</button>
+    </form>
+  </div>
+</div>
+{% endblock %} 

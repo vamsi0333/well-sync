@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enplify.ai</title>
+
+  <!-- Bootstrap & Marked -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Custom Chat Styles -->
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+    }
+
+    .hero-section {
+      padding-top: 80px;
+    }
+
+    .hero-image {
+      max-width: 50%;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    #lets-talk-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #4B2AAD;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 30px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.2s ease-in-out;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #lets-talk-btn:hover {
+      background-color: #3d2292;
+      transform: scale(1.05);
+    }
+
+    #chatbox {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      width: 320px;
+      max-height: 500px;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+    }
+
+    #chat-header {
+      background: #6A5ACD;
+      color: white;
+      padding: 10px;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-body {
+      padding: 10px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    #chat-body .user {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    #chat-body .bot {
+      text-align: left;
+      margin-bottom: 10px;
+    }
+
+    #chat-body .message {
+      display: inline-block;
+      padding: 10px;
+      border-radius: 12px;
+      max-width: 85%;
+    }
+
+    .user .message {
+      background-color: #e0dcff;
+    }
+
+    .bot .message {
+      background-color: #f2f2f2;
+    }
+
+    #user-input {
+      border: none;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 0 0 10px 10px;
+      outline: none;
+    }
+
+    #reset-btn {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Hero Section -->
+  <div class="hero-section text-white d-flex flex-column justify-content-center align-items-center">
+    <div class="text-center px-3">
+      <h1>Simplify Enterprise Information Integration</h1>
+      <h2>Deliver Unmatched Customer Experience</h2>
+      <h2>Drive Unparalleled Productivity Improvement</h2>
+      <h2>All with GenAI-Powered <strong>enplify.ai</strong></h2>
+    </div>
+    <img src="{{ url_for('static', filename='images/robot.png') }}" class="robot-img" alt="AI Robot"/>
+  </div>
+
+  <!-- Platform Section -->
+  <section class="container py-5">
+    <h3>Enplify Platform</h3>
+    <p>
+      Today's enterprise information landscape is complex and ever-growing with many enterprise and line-of-business applications,
+      document repositories, messaging and collaboration applications, datalakes, datawarehouses, Internet and Intranet websites,
+      and social media content. Speed to information/data is the most important component of customer experience as well as employee experience.
+      Getting the information they need is typically a 4 or 5-step process for any user in this complex enterprise landscape.
+    </p>
+  </section>
+
+  <!-- Let's Talk Button (Top Right) -->
+  <button id="lets-talk-btn" onclick="toggleChat()">💬 Let's Talk</button>
+
+  <!-- Chatbox -->
+  <div id="chatbox" class="card position-fixed shadow"
+       style="bottom: 80px; right: 20px; width: 350px; display: none; z-index: 1000;">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <strong>Enplify Assistant</strong>
+      <button id="reset-btn" class="btn btn-sm btn-light text-dark py-0 px-2">Reset</button>
+    </div>
+    <div class="card-body p-2" style="height: 300px; overflow-y: auto;" id="chat-body"></div>
+    <div class="card-footer p-2">
+      <input type="text" id="user-input" class="form-control" placeholder="Ask about Enplify.ai..." autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Chat Script -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const chatbox = document.getElementById("chatbox");
+    const chatBody = document.getElementById("chat-body");
+    const input = document.getElementById("user-input");
+    const resetBtn = document.getElementById("reset-btn");
+
+    function toggleChat() {
+      chatbox.style.display = chatbox.style.display === "flex" ? "none" : "flex";
+      chatbox.style.flexDirection = "column";
+      setTimeout(() => input.focus(), 100);
+    }
+
+    resetBtn.onclick = () => {
+      chatBody.innerHTML = "";
+      input.value = "";
+      input.focus();
+    };
+
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        const userMsg = input.value.trim();
+        if (!userMsg || input.disabled) return;
+
+        appendMessage("user", userMsg);
+        input.value = "";
+        input.disabled = true;
+
+        const typingElem = appendMessage("bot", "<i>Typing...</i>", true);
+
+        fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: userMsg })
+        })
+        .then(res => res.json())
+        .then(data => {
+          simulateTyping("bot", marked.parse(data.answer), typingElem);
+        })
+        .catch(() => {
+          typingElem.innerHTML = "⚠️ Something went wrong.";
+        })
+        .finally(() => {
+          input.disabled = false;
+          input.focus();
+        });
+      }
+    });
+
+    function appendMessage(role, html, returnElem = false) {
+      const msgWrapper = document.createElement("div");
+      msgWrapper.className = `d-flex mb-2 ${role === "user" ? "justify-content-end" : "justify-content-start"}`;
+
+      const msg = document.createElement("div");
+      msg.className = `p-2 rounded ${role === "user" ? "bg-primary text-white" : "bg-light text-dark"}`;
+      msg.innerHTML = html;
+
+      msgWrapper.appendChild(msg);
+      chatBody.appendChild(msgWrapper);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      return returnElem ? msg : null;
+    }
+
+    function simulateTyping(role, fullHTML, elem) {
+      let i = 0;
+      const plainText = fullHTML.replace(/<[^>]+>/g, '');
+      const interval = setInterval(() => {
+        elem.innerHTML = fullHTML.slice(0, i);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        i++;
+        if (i > fullHTML.length) clearInterval(interval);
+      }, 10);
+    }
+  </script>
+</body>
+</html>

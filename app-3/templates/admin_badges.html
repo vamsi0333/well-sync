@@ -1,0 +1,207 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Badge Management</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Manage employee badges and achievements</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <button onclick="showCreateBadgeModal()" class="inline-flex items-center px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Create Badge
+      </button>
+    </div>
+  </div>
+
+  <!-- Badge Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.143L13 21l-2.286-6.857L5 12l5.714-3.143L13 3z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Badges</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ badges|length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Assigned Badges</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">24</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Categories</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">6</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">This Month</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">8</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badges Grid -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Badges</h2>
+      <div class="flex space-x-2">
+        <select class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+          <option>All Categories</option>
+          <option>Technical</option>
+          <option>Soft Skills</option>
+          <option>Leadership</option>
+          <option>Communication</option>
+        </select>
+        <input type="text" placeholder="Search badges..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for badge in badges %}
+      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center">
+            <div class="text-3xl mr-3">{{ badge.icon }}</div>
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-white">{{ badge.name }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ badge.category }}</p>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="editBadge({{ badge.id }})" class="p-2 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+            </button>
+            <button onclick="deleteBadge({{ badge.id }})" class="p-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900 rounded-lg transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ badge.description }}</p>
+        
+        <div class="flex items-center justify-between">
+          <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{ badge.category }}</span>
+          <button onclick="assignBadge({{ badge.id }})" class="text-sm text-primary hover:text-primary/80 font-medium">
+            Assign to Employee
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Create Badge Modal -->
+<div id="createBadgeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-md">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Create New Badge</h3>
+      <form class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Badge Name</label>
+          <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+          <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option>Technical</option>
+            <option>Soft Skills</option>
+            <option>Leadership</option>
+            <option>Communication</option>
+            <option>Problem Solving</option>
+            <option>Innovation</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Icon</label>
+          <input type="text" placeholder="🐍" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        <div class="flex space-x-3 pt-4">
+          <button type="button" onclick="hideCreateBadgeModal()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+            Create Badge
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function showCreateBadgeModal() {
+  document.getElementById('createBadgeModal').classList.remove('hidden');
+}
+
+function hideCreateBadgeModal() {
+  document.getElementById('createBadgeModal').classList.add('hidden');
+}
+
+function editBadge(badgeId) {
+  alert('Edit badge functionality would be implemented here for badge ID: ' + badgeId);
+}
+
+function deleteBadge(badgeId) {
+  if (confirm('Are you sure you want to delete this badge?')) {
+    alert('Delete badge functionality would be implemented here for badge ID: ' + badgeId);
+  }
+}
+
+function assignBadge(badgeId) {
+  alert('Assign badge functionality would be implemented here for badge ID: ' + badgeId);
+}
+
+// Close modal when clicking outside
+document.getElementById('createBadgeModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideCreateBadgeModal();
+  }
+});
+</script>
+{% endblock %} 

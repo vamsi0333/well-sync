@@ -1,0 +1,60 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-10">
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">🔖</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">Saved Jobs & Alerts</h1>
+      <p class="text-lg text-white/90">Bookmark jobs and set up notifications for new openings.</p>
+    </div>
+  </div>
+  <div class="mt-8 animate-fade-in">
+    {% if jobs %}
+      <div class="space-y-6">
+        {% for job in jobs %}
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div>
+            <div class="font-bold text-lg text-primary">{{ job.title }}</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">{{ job.location }} • {{ job.type }}</div>
+            <div class="text-gray-700 dark:text-gray-300 text-sm mt-1">{{ job.desc }}</div>
+          </div>
+          <a href="#" onclick="showUnsaveModal(event)" class="mt-4 sm:mt-0 px-6 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Unsave</a>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="flex flex-col items-center justify-center py-16">
+        <div class="text-6xl mb-4">🔖</div>
+        <div class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">No saved jobs</div>
+        <div class="text-gray-500 dark:text-gray-400 mb-4">Save jobs to see them here!</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Unsave Modal and JS for Unsave button at the end of the file -->
+<div id="unsaveModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4 relative">
+    <button onclick="closeUnsaveModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold mb-4">Unsave Job</h2>
+    <p>Are you sure you want to unsave this job?</p>
+    <div class="mt-6 flex justify-end space-x-3">
+      <button onclick="closeUnsaveModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition">Cancel</button>
+      <button onclick="confirmUnsave()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">Unsave</button>
+    </div>
+  </div>
+</div>
+<script>
+function showUnsaveModal(e) {
+  e.preventDefault();
+  document.getElementById('unsaveModal').classList.remove('hidden');
+}
+function closeUnsaveModal() {
+  document.getElementById('unsaveModal').classList.add('hidden');
+}
+function confirmUnsave() {
+  closeUnsaveModal();
+  alert('Job unsaved! (Simulated)');
+}
+</script>
+{% endblock %} 

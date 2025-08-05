@@ -1,0 +1,232 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Learning Badges Overview</h1>
+        <p class="text-gray-600 dark:text-gray-400">Manage and track learning badges across the organization</p>
+      </div>
+      <div class="flex space-x-3">
+        <button onclick="exportBadgeData()" class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Export Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Badges</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_badges }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Users with Badges</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ users_with_badges }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Awards</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_awards }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Avg. Badges/User</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ avg_badges_per_user }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badge Categories -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Most Popular Badges -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Most Popular Badges</h2>
+      
+      {% if popular_badges %}
+      <div class="space-y-4">
+        {% for badge in popular_badges %}
+        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ badge.name }}</h3>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ badge.category }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ badge.award_count }}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">awards</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-8">
+        <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+        </svg>
+        <p class="text-gray-500 dark:text-gray-400">No badges awarded yet</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Top Performers -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Top Performers</h2>
+      
+      {% if top_performers %}
+      <div class="space-y-4">
+        {% for performer in top_performers %}
+        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+              <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ performer.name }}</h3>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ performer.department }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ performer.badge_count }}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">badges</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-8">
+        <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <p class="text-gray-500 dark:text-gray-400">No performers data available</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Badge Distribution Chart -->
+  <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Badge Distribution by Category</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for category in badge_categories %}
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-3">
+          <span class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ category.count }}</span>
+        </div>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ category.name }}</h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400">{{ category.percentage }}% of total</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Badge Awards -->
+  <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Badge Awards</h2>
+    
+    {% if recent_awards %}
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">User</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Badge</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Awarded By</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Reason</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          {% for award in recent_awards %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-4 py-3">
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{{ award.user_name }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ award.user_email }}</div>
+            </td>
+            <td class="px-4 py-3">
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{{ award.badge_name }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ award.badge_category }}</div>
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+              {{ award.awarded_by }}
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+              {{ award.awarded_at }}
+            </td>
+            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+              {{ award.reason or 'No reason provided' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-8">
+      <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-gray-500 dark:text-gray-400">No recent badge awards</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function exportBadgeData() {
+  // Implementation for exporting badge data
+  alert('Export functionality would be implemented here.');
+}
+</script>
+{% endblock %} 

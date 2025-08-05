@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-10">
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">🎯</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">My Career Goals</h1>
+      <p class="text-lg text-white/90">Set, track, and achieve your career goals.</p>
+    </div>
+  </div>
+  <form method="post" class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 space-y-4 animate-fade-in">
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Add a New Goal</label>
+    <div class="flex gap-2">
+      <input type="text" name="goal" class="flex-1 rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2" placeholder="e.g. Get AWS Certified">
+      <button type="submit" class="px-6 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition">Add Goal</button>
+    </div>
+  </form>
+  <div class="space-y-6 animate-fade-in">
+    {% for g in goals %}
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 flex flex-col">
+      <div class="flex items-center justify-between mb-2">
+        <div class="font-bold text-lg text-primary">{{ g.goal }}</div>
+        <span class="text-sm text-gray-500 dark:text-gray-400">{{ g.progress }}% complete</span>
+      </div>
+      <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">
+        <div class="bg-primary h-3 rounded-full" style="width: {{ g.progress }}%"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %} 

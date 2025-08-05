@@ -1,0 +1,117 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">👤 Add New Employee</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Register a new employee in the system</p>
+  </div>
+
+  <!-- Add Employee Form -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
+    <form method="POST" class="space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+          <input type="text" id="name" name="name" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+          <input type="email" id="email" name="email" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+          <input type="tel" id="phone" name="phone"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="department" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Department</label>
+          <select id="department" name="department" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Select Department</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Finance">Finance</option>
+            <option value="Operations">Operations</option>
+            <option value="Customer Support">Customer Support</option>
+            <option value="Product">Product</option>
+            <option value="Design">Design</option>
+            <option value="Legal">Legal</option>
+            <option value="IT">IT</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="position" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Position</label>
+          <input type="text" id="position" name="position" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="hire_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Hire Date</label>
+          <input type="date" id="hire_date" name="hire_date"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="manager" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manager</label>
+          <input type="text" id="manager" name="manager"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location</label>
+          <input type="text" id="location" name="location"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="salary_band" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Salary Band</label>
+          <select id="salary_band" name="salary_band"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Select Salary Band</option>
+            <option value="Band 1">Band 1</option>
+            <option value="Band 2">Band 2</option>
+            <option value="Band 3">Band 3</option>
+            <option value="Band 4">Band 4</option>
+            <option value="Band 5">Band 5</option>
+            <option value="Band 6">Band 6</option>
+            <option value="Band 7">Band 7</option>
+            <option value="Band 8">Band 8</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="employment_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Employment Type</label>
+          <select id="employment_type" name="employment_type" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+            <option value="Temporary">Temporary</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="flex space-x-4 pt-6">
+        <a href="/admin/employees" 
+           class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center">
+          Cancel
+        </a>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+          Add Employee
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

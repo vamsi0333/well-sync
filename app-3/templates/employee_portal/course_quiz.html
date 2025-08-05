@@ -1,0 +1,144 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h1>
+        <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500 dark:text-gray-400">Passing Score</div>
+        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ course.passing_score }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Info -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Duration</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.duration }}</div>
+        </div>
+      </div>
+      
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-green-600 dark:text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Difficulty</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.difficulty }}</div>
+        </div>
+      </div>
+      
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Badge</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.badge }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Form -->
+  <form method="POST" action="{{ url_for('submit_course_quiz') }}" class="space-y-8" id="quizForm">
+    <input type="hidden" name="course_id" value="{{ course.id }}">
+    
+    {% for question in course.questions %}
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 question-container" data-question="{{ loop.index }}">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          Question {{ loop.index }} of {{ course.questions|length }}
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300">{{ question.question }}</p>
+      </div>
+      
+      <div class="space-y-3">
+        {% for option in question.options %}
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors question-option">
+          <input type="radio" name="answers[{{ loop.index0 }}]" value="{{ loop.index0 }}" required
+                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">{{ option }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Navigation and Submit -->
+    <div class="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+      <a href="{{ url_for('employee_learning') }}" 
+         class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+        Back to Learning
+      </a>
+      
+      <div class="flex items-center space-x-4">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+          <span>Read each question carefully before selecting your answer</span>
+          <br>
+          <span>You can review your answers before submitting</span>
+        </div>
+        
+        <button type="submit" 
+                class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold"
+                onclick="return validateQuiz()">
+          Submit Quiz
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+function validateQuiz() {
+  const questions = document.querySelectorAll('.question-container');
+  let allAnswered = true;
+  
+  questions.forEach((question, index) => {
+    const options = question.querySelectorAll('input[type="radio"]');
+    const answered = Array.from(options).some(option => option.checked);
+    
+    if (!answered) {
+      allAnswered = false;
+      question.style.borderColor = '#ef4444';
+    } else {
+      question.style.borderColor = '#e5e7eb';
+    }
+  });
+  
+  if (!allAnswered) {
+    alert('Please answer all questions before submitting.');
+    return false;
+  }
+  
+  return true;
+}
+
+// Add visual feedback for selected options
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const label = this.closest('label');
+    const container = label.closest('.question-container');
+    
+    // Remove highlight from other options in the same question
+    container.querySelectorAll('label').forEach(l => l.classList.remove('bg-blue-50', 'border-blue-300'));
+    
+    // Add highlight to selected option
+    if (this.checked) {
+      label.classList.add('bg-blue-50', 'border-blue-300');
+    }
+  });
+});
+</script>
+{% endblock %} 

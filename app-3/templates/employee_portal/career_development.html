@@ -1,0 +1,301 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">🚀 Career Development Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Grow your career with learning and opportunities</p>
+  </div>
+
+  <!-- Career Overview -->
+  <div class="grid md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📚</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Learning Progress</h3>
+          <p class="text-2xl font-bold text-blue-600">75%</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Current course completion</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🏆</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Badges Earned</h3>
+          <p class="text-2xl font-bold text-green-600">12</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Skills validated</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🎯</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Career Goals</h3>
+          <p class="text-2xl font-bold text-purple-600">5</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Goals set this year</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+      <a href="/employee/careers/learning" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📖</span>
+        <div>
+          <div class="font-semibold">Start Learning</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Access training courses</div>
+        </div>
+      </a>
+      <a href="/employee/careers/goals" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">🎯</span>
+        <div>
+          <div class="font-semibold">Set Goals</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Define career objectives</div>
+        </div>
+      </a>
+      <a href="/employee/knowledge" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📚</span>
+        <div>
+          <div class="font-semibold">Knowledge Base</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Browse resources</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="careers-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          💼 Career Opportunities
+        </button>
+        <button id="knowledge-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          📚 Knowledge Base
+        </button>
+      </nav>
+    </div>
+
+    <!-- Careers Tab -->
+    <div id="careers-content" class="tab-content active p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Career Opportunities</h2>
+        <a href="/employee/careers" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          View All
+        </a>
+      </div>
+      
+      <!-- Career Sections -->
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Learning Progress -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-primary mb-4">📖 Learning Progress</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Python Programming</span>
+              <span class="text-sm font-medium">80%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 80%"></div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Project Management</span>
+              <span class="text-sm font-medium">60%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Leadership Skills</span>
+              <span class="text-sm font-medium">45%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+            </div>
+          </div>
+          <a href="/employee/careers/learning" class="block mt-4 text-blue-500 hover:text-blue-600 text-sm font-medium">
+            Continue Learning →
+          </a>
+        </div>
+
+        <!-- Job Applications -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-primary mb-4">💼 Job Applications</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+              <div>
+                <div class="font-medium text-sm">Senior Software Engineer</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Applied: Jan 15, 2024</div>
+              </div>
+              <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Pending</span>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+              <div>
+                <div class="font-medium text-sm">Product Manager</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Applied: Jan 10, 2024</div>
+              </div>
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Reviewed</span>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg">
+              <div>
+                <div class="font-medium text-sm">Data Scientist</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Applied: Jan 5, 2024</div>
+              </div>
+              <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Approved</span>
+            </div>
+          </div>
+          <a href="/employee/careers/applications" class="block mt-4 text-blue-500 hover:text-blue-600 text-sm font-medium">
+            View All Applications →
+          </a>
+        </div>
+      </div>
+
+      <!-- Resume Upload Section -->
+      <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold text-primary mb-4">📄 Resume Management</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-medium text-gray-900 dark:text-white mb-2">Upload Resume</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Upload your resume to apply for specific roles through our ATS system.</p>
+            <form action="/employee/careers/resume/upload" method="POST" enctype="multipart/form-data" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select File</label>
+                <input type="file" name="resume" accept=".pdf,.doc,.docx" required
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Role (Optional)</label>
+                <select name="target_role" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+                  <option value="">Select a role</option>
+                  <option value="senior_software_engineer">Senior Software Engineer</option>
+                  <option value="product_manager">Product Manager</option>
+                  <option value="data_scientist">Data Scientist</option>
+                  <option value="ui_ux_designer">UI/UX Designer</option>
+                  <option value="devops_engineer">DevOps Engineer</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                Upload Resume
+              </button>
+            </form>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-900 dark:text-white mb-2">Current Resume</h4>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-medium text-sm">Resume_2024.pdf</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Uploaded: Jan 15, 2024</div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm">View</button>
+                  <button class="text-green-600 hover:text-green-800 text-sm">Update</button>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <h5 class="font-medium text-gray-900 dark:text-white mb-2">ATS Analysis</h5>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span>Match Score</span>
+                  <span class="font-medium text-green-600">85%</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span>Skills Found</span>
+                  <span class="font-medium">12/15</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span>Experience Level</span>
+                  <span class="font-medium">Senior</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge Tab -->
+    <div id="knowledge-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Knowledge Base</h2>
+        <a href="/employee/knowledge" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Browse All
+        </a>
+      </div>
+      
+      {% if knowledge_docs %}
+        <div class="grid md:grid-cols-2 gap-6">
+          {% for doc in knowledge_docs %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex items-start space-x-3">
+              <div class="text-2xl">
+                {% if doc.category == 'Technical' %}💻
+                {% elif doc.category == 'HR' %}👥
+                {% elif doc.category == 'Finance' %}💰
+                {% elif doc.category == 'Operations' %}⚙️
+                {% else %}📄{% endif %}
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ doc.title }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ doc.content[:100] }}...</p>
+                <div class="flex items-center space-x-4 mt-3">
+                  <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">{{ doc.category }}</span>
+                  <span class="text-xs text-gray-500">{{ doc.views }} views</span>
+                </div>
+              </div>
+            </div>
+            <a href="/employee/knowledge/{{ doc.id }}" class="block mt-3 text-blue-500 hover:text-blue-600 text-sm font-medium">
+              Read More →
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📚</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Knowledge Documents</h3>
+          <p class="text-gray-600 dark:text-gray-400">Knowledge base documents will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+</script>
+{% endblock %} 

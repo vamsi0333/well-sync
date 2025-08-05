@@ -1,0 +1,160 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
+from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey'
+
+# Configure file upload
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Dummy data stores
+mock_user = {"email": "user@example.com", "password": "password123"}
+mock_admin = {"email": "admin@example.com", "password": "admin123"}
+
+user_profiles = {
+    "user@example.com": {
+        "name": "John Doe",
+        "email": "user@example.com",
+        "department": "Engineering",
+        "role": "user"
+    },
+    "admin@example.com": {
+        "name": "Admin User",
+        "email": "admin@example.com",
+        "department": "IT",
+        "role": "admin"
+    }
+}
+
+tickets = [
+    {"id": 1, "title": "Printer not connecting", "priority": "high", "status": "open", "date": "2025-07-18", "description": "Printer shows offline status", "user_email": "user@example.com", "attachments": []},
+    {"id": 2, "title": "VPN Login Failure", "priority": "medium", "status": "pending", "date": "2025-07-19", "description": "Cannot connect to VPN", "user_email": "user@example.com", "attachments": []}
+]
+
+comments = {
+    1: [{"author": "Alice", "message": "I tried rebooting it.", "timestamp": "2025-07-18 09:45", "author_type": "user"},
+        {"author": "IT Staff", "message": "We're investigating this now.", "timestamp": "2025-07-18 10:15", "author_type": "admin"}],
+    2: []
+}
+
+requests_data = [
+    {"id": 1, "type": "hardware", "subject": "Need a new mouse", "description": "Mouse disconnecting.",
+     "status": "pending", "submitted_by": "user@example.com", "hr_comment": "We'll issue one next week.", "attachments": []}
+]
+
+notifications = []
+
+# In-memory device tracking (simulate for demo)
+devices = [
+    {
+        'id': 1,
+        'name': 'Dell XPS 13',
+        'type': 'Laptop',
+        'assigned_to': 'employee1@example.com',
+        'status': 'lent',
+        'lent_date': '2025-07-01',
+        'return_date': '',
+        'notes': 'For remote work'
+    },
+    {
+        'id': 2,
+        'name': 'iPhone 13',
+        'type': 'Phone',
+        'assigned_to': '',
+        'status': 'available',
+        'lent_date': '',
+        'return_date': '',
+        'notes': ''
+    }
+]
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def send_email_notification(to_email, subject, message):
+    """Send email notification (placeholder for production)"""
+    # In production, configure SMTP settings
+    print(f"Email to {to_email}: {subject} - {message}")
+    return True
+
+def add_notification(user_email, message, notification_type="info"):
+    """Add notification to the system"""
+    notification = {
+        "id": len(notifications) + 1,
+        "user_email": user_email,
+        "message": message,
+        "type": notification_type,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "read": False
+    }
+    notifications.append(notification)
+
+# --- Login Logic: Only two users allowed ---
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"].strip().lower()
+        password = request.form["password"]
+        if email == "employee@example.com":
+            session["user"] = email
+            session["role"] = "employee"
+            session["name"] = "Employee"
+            flash("Logged in as Employee", "success")
+            return redirect(url_for("dashboard"))
+        elif email == "hr@example.com":
+            session["user"] = email
+            session["role"] = "hr"
+            session["name"] = "HR"
+            flash("Logged in as HR", "success")
+            return redirect(url_for("admin_dashboard"))
+        else:
+            flash("Invalid email. Use employee@example.com or hr@example.com.", "error")
+    return render_template("login.html")
+
+# --- Admin/HR Required Decorator ---
+def admin_required():
+    if session.get("role") != "hr":
+        abort(403)
+
+# --- Employee Dashboard ---
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    if session.get("role") == "hr":
+        return redirect(url_for("admin_dashboard"))
+    # ... render employee dashboard ...
+    return render_template("dashboard.html", name=session.get("name", "Employee"))
+
+# --- HR/Admin Dashboard ---
+@app.route("/admin")
+def admin_dashboard():
+    if "user" not in session or session.get("role") != "hr":
+        return redirect(url_for("login"))
+    # ... render HR dashboard ...
+    return render_template("admin_dashboard.html")
+
+# --- All other routes (tickets, requests, careers, etc.) ---
+# Copy/merge all routes from employee_portal/app.py and IT portal here.
+# Make sure all @app.route decorators are unique and do not conflict.
+
+# --- Navigation in layout.html ---
+# Update all portal links to use relative URLs, e.g.:
+# <a href="/dashboard">Employee Portal</a>
+# <a href="/admin">HR Portal</a>
+# <a href="/submit-ticket">Submit IT Ticket</a>
+# ... etc.
+
+# --- Run on port 5001 ---
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)

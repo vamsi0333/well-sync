@@ -1,0 +1,37 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+    displayName: 'Use Python 3.11'
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Use Node.js 18.x (optional, safe for tooling)'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Copy website content to staging directory'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+    displayName: 'Publish build artifacts'
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: 'AzureConnection'  # 🔁 Must match your service connection name
+      appName: 'NexIQon'                    # 🔁 Your Azure Web App name
+      package: '$(System.ArtifactsDirectory)/drop'
+    displayName: 'Deploy to Azure Web App'
+

@@ -1,0 +1,31 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
+  {% for job in jobs if job.id in saved_jobs %}
+  <div class="bg-white/90 dark:bg-gray-900/90 rounded-2xl shadow-lg p-8 flex flex-col gap-4 hover:shadow-2xl transition-all duration-300 group relative overflow-hidden border border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-4 mb-2">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-2xl font-bold text-white shadow">{{ job.title[0] }}</div>
+      <div class="flex-1">
+        <span class="font-bold text-xl text-primary group-hover:text-accent transition">{{ job.title }}</span>
+        <div class="flex gap-2 mt-1">
+          {% if job.location == 'Remote' %}<span class="px-2 py-1 rounded bg-blue-100 text-blue-600 text-xs font-semibold">Remote</span>{% endif %}
+          <span class="px-2 py-1 rounded bg-green-100 text-green-600 text-xs font-semibold">{{ job.type }}</span>
+          <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-semibold">${{ job.salary }}</span>
+          <span class="px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs font-semibold">{{ job.industry }}</span>
+        </div>
+      </div>
+      <button onclick="navigator.clipboard.writeText(window.location.origin + '/careers/job/{{ job.id }}');showToast('Link copied!','bg-primary');" class="ml-2 px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-accent hover:bg-accent hover:text-white transition" title="Share"><span>🔗</span></button>
+    </div>
+    <div class="text-gray-700 dark:text-gray-300 text-sm mb-2 line-clamp-2">{{ job.desc }}</div>
+    <div class="flex-1"></div>
+    <div class="flex justify-end gap-2 mt-2">
+      <form method="post" class="flex gap-2">
+        <button name="apply_job" value="{{ job.id }}" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-200"><span>🚀</span> Quick Apply</button>
+        <button name="save_job" value="{{ job.id }}" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-primary text-white font-bold shadow hover:shadow-lg transition-all duration-200 opacity-60 cursor-not-allowed" disabled><span>⭐</span> Saved</button>
+      </form>
+      <button type="button" class="flex items-center gap-1 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-accent font-semibold shadow hover:bg-accent hover:text-white transition-all duration-200 focus:outline-none view-details-btn" data-job-id="{{ job.id }}" aria-label="View job details"><span>ℹ️</span> Details</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% if not jobs or saved_jobs|length == 0 %}
+  <div class="text-gray-400 text-center py-12">No saved jobs yet. Click 'Save' on jobs to add them here.</div>
+{% endif %} 

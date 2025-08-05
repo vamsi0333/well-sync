@@ -1,0 +1,55 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">System Logs</h1>
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left px-4 py-2">Timestamp</th>
+          <th class="text-left px-4 py-2">Level</th>
+          <th class="text-left px-4 py-2">Message</th>
+          <th class="text-left px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td class="px-4 py-2">{{ log.timestamp }}</td>
+          <td class="px-4 py-2">{{ log.level }}</td>
+          <td class="px-4 py-2 truncate max-w-xs">{{ log.message[:60] }}...</td>
+          <td class="px-4 py-2">
+            <button class="px-4 py-2 rounded-lg bg-primary text-white font-bold shadow hover:bg-accent transition" onclick="showLogModal('{{ log.timestamp }}', '{{ log.level }}', `{{ log.message|replace('`', '\`') }}`)">View</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Log Modal -->
+  <div id="logModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-lg w-full mx-4 relative">
+      <button onclick="closeLogModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+      <h2 class="text-2xl font-bold mb-4">Log Details</h2>
+      <div class="mb-2"><span class="font-semibold">Timestamp:</span> <span id="logModalTimestamp"></span></div>
+      <div class="mb-2"><span class="font-semibold">Level:</span> <span id="logModalLevel"></span></div>
+      <div class="mb-2"><span class="font-semibold">Message:</span></div>
+      <pre id="logModalMessage" class="bg-gray-100 dark:bg-gray-800 p-4 rounded text-sm overflow-x-auto"></pre>
+    </div>
+  </div>
+
+  <script>
+    function showLogModal(timestamp, level, message) {
+      document.getElementById('logModalTimestamp').textContent = timestamp;
+      document.getElementById('logModalLevel').textContent = level;
+      document.getElementById('logModalMessage').textContent = message;
+      document.getElementById('logModal').classList.remove('hidden');
+    }
+    function closeLogModal() {
+      document.getElementById('logModal').classList.add('hidden');
+    }
+  </script>
+</div>
+{% endblock %} 

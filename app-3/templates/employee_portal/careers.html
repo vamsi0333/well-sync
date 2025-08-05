@@ -1,0 +1,423 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="w-full min-h-screen grid grid-cols-1 lg:grid-cols-4 gap-12">
+  <!-- Main Content: Hero, Tabs, Jobs -->
+  <section class="col-span-1 lg:col-span-3 space-y-12 w-full px-2 md:px-8 lg:px-16 xl:px-32">
+    <!-- Hero -->
+    <div class="p-8 flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-12 w-full border-b border-gray-200">
+      <div class="flex-shrink-0 text-6xl">🌟</div>
+      <div class="flex-1">
+        <h1 class="text-5xl font-extrabold text-gray-900 mb-3 tracking-tight">Careers Portal</h1>
+        <p class="text-lg text-gray-500 mb-6">Grow professionally with internal job listings, career path guidance, upskilling, mentorship, and application tracking—all in one place.</p>
+      </div>
+    </div>
+    
+    <!-- Quick Action Buttons -->
+    <div class="flex flex-wrap gap-4 mb-8 mt-4">
+      <a href="/employee/careers/internal-jobs" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+        🏢 View Internal Jobs
+      </a>
+      <button onclick="showSkillsTestTab()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
+        📊 Skills Assessment
+      </button>
+    </div>
+    <!-- Tabs -->
+    <div class="w-full flex flex-wrap gap-4 mb-8 mt-4 border-b border-gray-200 pb-2">
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-900 border-b-2 border-black transition" data-tab="jobs" style="background:none;">Jobs</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="skills-test" style="background:none;">Skills Test</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="learning-roadmap" style="background:none;">Learning Roadmap</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="internal-jobs" style="background:none;">Internal Jobs</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="learning" style="background:none;">Learning Hub</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="upskilling" style="background:none;">Upskilling</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="badges" style="background:none;">Badges</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="paths" style="background:none;">Career Paths</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="mentorship" style="background:none;">Mentorship</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="resume" style="background:none;">Resume</button>
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="applications" style="background:none;">Applications</button>
+      {% if session.get('role') == 'admin' %}
+      <button class="tab-btn px-6 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-tab="admin" style="background:none;">Admin Tools</button>
+      {% endif %}
+    </div>
+    <!-- Tab Contents -->
+    <div id="tab-jobs" class="tab-content">
+      {% include 'careers_tab_jobs.html' with context %}
+    </div>
+    <div id="tab-skills-test" class="tab-content hidden">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">🧠 Skills Assessment Test</h1>
+        <p class="text-gray-600 mb-6">Take our comprehensive skills assessment to identify your strengths and areas for improvement.</p>
+        
+        <div class="bg-blue-50 rounded-lg p-6 mb-6">
+          <h3 class="text-lg font-semibold text-blue-900 mb-4">Test Instructions</h3>
+          <ul class="space-y-2 text-sm text-blue-800">
+            <li>This test contains 10 multiple-choice questions</li>
+            <li>You have 30 minutes to complete the test</li>
+            <li>Each question has only one correct answer</li>
+            <li>You cannot go back to previous questions once answered</li>
+            <li>Your results will help create a personalized learning roadmap</li>
+          </ul>
+        </div>
+        
+        <form method="POST" action="/employee/careers/submit-skills-test" class="space-y-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Question 1 of 10</h3>
+            <p class="text-gray-700 mb-4">What is the primary purpose of version control systems like Git?</p>
+            
+            <div class="space-y-3">
+              <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="q1" value="a" required class="w-4 h-4 text-blue-600">
+                <span class="ml-3 text-gray-700">To create backups of files</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="q1" value="b" required class="w-4 h-4 text-blue-600">
+                <span class="ml-3 text-gray-700">To track changes and collaborate on code</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="q1" value="c" required class="w-4 h-4 text-blue-600">
+                <span class="ml-3 text-gray-700">To compress files for storage</span>
+              </label>
+              <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="q1" value="d" required class="w-4 h-4 text-blue-600">
+                <span class="ml-3 text-gray-700">To encrypt sensitive data</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="flex justify-between">
+            <a href="/employee/careers" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+              Cancel
+            </a>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+              Submit Test
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="tab-learning-roadmap" class="tab-content hidden">
+      {% include 'employee_portal/learning_roadmap_content.html' %}
+    </div>
+    <div id="tab-internal-jobs" class="tab-content hidden">
+      {% include 'employee_portal/internal_jobs.html' with context %}
+    </div>
+    <div id="tab-learning" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">📚 Learning Hub</h2>
+        <p class="text-gray-600 mb-4">Access curated educational content to build new skills and grow professionally.</p>
+        <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Types of Courses Offered:</h3>
+        <ul class="list-disc pl-6 text-gray-700 mb-4">
+          <li>Internal Training Modules (e.g., onboarding, leadership, compliance)</li>
+          <li>External Integrations (LinkedIn Learning, Coursera, Udemy, etc.)</li>
+          <li>Role-Specific Tracks (e.g., Data Analyst Track, HR Specialist Track)</li>
+          <li>Microlearning (bite-sized videos or lessons)</li>
+          <li>Mandatory Courses (for promotions, certifications, compliance)</li>
+        </ul>
+        <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Course Features:</h3>
+        <ul class="list-disc pl-6 text-gray-700">
+          <li>Interactive video or PDF content</li>
+          <li>Progress tracker</li>
+          <li>Quizzes or assessments at the end</li>
+          <li>Certificate of completion for major courses</li>
+          <li>Bookmarking and saving for later</li>
+        </ul>
+      </div>
+    </div>
+    <div id="tab-upskilling" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">🚀 Upskilling Framework</h2>
+        <p class="text-gray-600 mb-4">Build new capabilities that align with internal roles and advancement pathways.</p>
+        <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">How Upskilling Works:</h3>
+        <ul class="list-disc pl-6 text-gray-700 mb-4">
+          <li>Skill Roadmaps: Each job role comes with a list of required and recommended skills</li>
+          <li>Recommended Learning Paths: Suggested courses based on your current role and goals</li>
+          <li>Skill Assessments: Optional quizzes or assignments to test understanding</li>
+          <li>Progress Dashboard: Visual tracker showing completed skills vs. required ones</li>
+          <li>Manager Validation: (Optional) Manager verifies application of new skills</li>
+        </ul>
+        <div class="mt-6">
+          <span class="block text-gray-900 font-semibold mb-2">Your Progress:</span>
+          <div class="w-full h-2 bg-gray-200 mb-2"><div class="h-2 bg-gray-900" style="width: 60%;"></div></div>
+          <span class="text-gray-600 text-sm">60% of required skills completed for your target role</span>
+        </div>
+      </div>
+    </div>
+    <div id="tab-badges" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">🏅 Badges and Achievements</h2>
+        <p class="text-gray-600 mb-4">Earn badges as visual tokens of accomplishment, motivating continued learning and signaling expertise.</p>
+        <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">How to Earn Badges:</h3>
+        <ul class="list-disc pl-6 text-gray-700 mb-4">
+          <li>Course Completion Badges: For finishing a course or module</li>
+          <li>Skill Badges: For completing a series of related courses (e.g., “Excel Master”)</li>
+          <li>Track Badges: For completing an entire learning track or career pathway</li>
+          <li>Mentorship Badges: For mentoring or being mentored successfully</li>
+          <li>Custom Company Badges: For internal milestones (e.g., diversity training, workshops)</li>
+        </ul>
+        <h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">Badge Display Options:</h3>
+        <ul class="list-disc pl-6 text-gray-700">
+          <li>Show on employee profile</li>
+          <li>Export to PDF/resume</li>
+          <li>Filterable badge gallery (by department, skill, date earned)</li>
+        </ul>
+        <div class="mt-6">
+          <span class="block text-gray-900 font-semibold mb-2">Your Badges:</span>
+          <div class="flex gap-4 flex-wrap">
+            <div class="flex flex-col items-center"><span class="text-3xl">📊</span><span class="text-xs mt-1">Excel Master</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🗣️</span><span class="text-xs mt-1">Communication Pro</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">👩‍💻</span><span class="text-xs mt-1">Python Certified</span></div>
+            <div class="flex flex-col items-center"><span class="text-3xl">🤝</span><span class="text-xs mt-1">Mentor</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="tab-paths" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Career Paths</h2>
+        <p class="text-gray-600 mb-4">Explore possible roles and advancement steps within the organization. See what skills and experiences are needed for your next move.</p>
+        <ul class="space-y-2">
+          <li><span class="font-semibold">Software Engineer → Senior Engineer → Lead Engineer → Engineering Manager</span></li>
+          <li><span class="font-semibold">HR Associate → HR Specialist → HR Manager → HR Director</span></li>
+          <li><span class="font-semibold">Data Analyst → Data Scientist → Analytics Lead → Head of Analytics</span></li>
+        </ul>
+      </div>
+    </div>
+    <div id="tab-mentorship" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Mentorship</h2>
+        <p class="text-gray-600 mb-4">Connect with mentors or offer to mentor others. Grow together and share experiences.</p>
+        <a href="/careers/mentorship" class="text-blue-600 underline hover:text-black">Find a Mentor</a> | <a href="/careers/mentorship" class="text-blue-600 underline hover:text-black">Offer to Mentor</a>
+      </div>
+    </div>
+    <div id="tab-resume" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Resume & Portfolio</h2>
+        <p class="text-gray-600 mb-4">Upload, view, and update your resume or portfolio. Get AI feedback and tips for improvement.</p>
+        <a href="/careers/resume" class="text-blue-600 underline hover:text-black">Manage Resume</a>
+      </div>
+    </div>
+    <div id="tab-applications" class="tab-content hidden">
+      {% include 'careers_tab_applications.html' with context %}
+    </div>
+    {% if session.get('role') == 'admin' %}
+    <div id="tab-admin" class="tab-content hidden">
+      <div class="py-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Admin Tools</h2>
+        <p class="text-gray-600 mb-4">Post jobs, review applications, and support employee development.</p>
+        <a href="#" onclick="showPostJobModal(event)" class="text-blue-600 underline hover:text-black">Post a Job</a> | <a href="#" onclick="showReviewApplicationsModal(event)" class="text-blue-600 underline hover:text-black">Review Applications</a>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  <!-- Sidebar: Minimalist Links Only -->
+  <aside class="col-span-1 space-y-8 lg:sticky top-24 self-start animate-fade-in h-fit z-10">
+    <nav class="flex flex-col gap-2 text-base text-gray-700">
+      <a href="/careers/applications" class="hover:underline">Applications</a>
+      <a href="/careers/upskilling" class="hover:underline">Upskilling</a>
+      <a href="/careers/mentorship" class="hover:underline">Mentorship</a>
+      <a href="/careers/saved" class="hover:underline">Saved Jobs</a>
+      <a href="/careers/goals" class="hover:underline">Goals</a>
+      <a href="/careers/badges" class="hover:underline">Badges</a>
+      <a href="/careers/progress" class="hover:underline">Progress</a>
+      <a href="/careers/resources" class="hover:underline">Resources</a>
+    </nav>
+  </aside>
+</div>
+<!-- Job Details Modal (ultra-minimalist) -->
+<div id="job-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm hidden" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="bg-white p-8 max-w-2xl w-full relative animate-fade-in" style="border-radius:0; box-shadow:none; border:none;">
+    <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl font-bold focus:outline-none" aria-label="Close job details" style="border-radius:0; background:none;">×</button>
+    <div id="modal-content" class="space-y-4">
+      <div class="flex items-center gap-4">
+        <span id="modal-title-icon" class="text-4xl">💼</span>
+        <h3 id="modal-title" class="text-2xl font-bold text-gray-900"></h3>
+        <span id="modal-company" class="ml-auto text-base text-gray-500 font-semibold"></span>
+      </div>
+      <div class="flex gap-4 border-b pb-2 mb-2 border-gray-200">
+        <button class="modal-tab-btn px-4 py-2 font-bold text-base text-gray-900 border-b-2 border-black transition" data-modal-tab="desc" style="background:none;">Description</button>
+        <button class="modal-tab-btn px-4 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-modal-tab="reqs" style="background:none;">Requirements</button>
+        <button class="modal-tab-btn px-4 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-modal-tab="company" style="background:none;">Company</button>
+        <button class="modal-tab-btn px-4 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-modal-tab="apply" style="background:none;">How to Apply</button>
+        <button class="modal-tab-btn px-4 py-2 font-bold text-base text-gray-500 border-b-2 border-transparent hover:border-black transition" data-modal-tab="share" style="background:none;">Share</button>
+      </div>
+      <div id="modal-tab-desc" class="modal-tab-content"> <div id="modal-desc" class="text-gray-700"></div> </div>
+      <div id="modal-tab-reqs" class="modal-tab-content hidden"> <div id="modal-reqs" class="text-gray-500 text-sm"></div> </div>
+      <div id="modal-tab-company" class="modal-tab-content hidden"> <div class="text-gray-700">Company info coming soon.</div> </div>
+      <div id="modal-tab-apply" class="modal-tab-content hidden"> <form id="modal-apply-form" method="post"><input type="hidden" name="apply_job" id="modal-apply-id"><button class="flex items-center gap-2 px-4 py-2 text-gray-900 border border-gray-300 hover:border-black font-bold transition-all duration-200 bg-transparent" style="border-radius:0;"><span>🚀</span> Quick Apply</button></form> </div>
+      <div id="modal-tab-share" class="modal-tab-content hidden"> <button onclick="navigator.clipboard.writeText(window.location.origin + '/careers/job/' + document.getElementById('modal-apply-id').value);showToast('Link copied!','bg-gray-900');" class="px-4 py-2 text-gray-900 border border-gray-300 hover:border-black font-bold transition" style="border-radius:0; background:none;">Copy Job Link</button> </div>
+    </div>
+  </div>
+</div>
+<!-- Toasts -->
+<div id="toast" class="fixed bottom-8 right-8 z-[100] hidden px-6 py-4 font-semibold text-gray-900 text-lg bg-white animate-fade-in border border-gray-300" style="border-radius:0;"></div>
+<script type="text/template" id="flash-messages">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    {{ category }}|||{{ message|e }}
+  {% endfor %}
+{% endwith %}
+</script>
+<script>
+// Sidebar 'More' toggle
+const moreBtn = document.querySelector('button[onclick*="more-links"]');
+if (moreBtn) {
+  moreBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('more-links').classList.toggle('hidden');
+  });
+}
+// Tabs logic
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    tabBtns.forEach(b => b.classList.remove('bg-primary','bg-accent','text-white'));
+    this.classList.add('bg-primary','text-white');
+    tabContents.forEach(tc => tc.classList.add('hidden'));
+    document.getElementById('tab-' + this.dataset.tab).classList.remove('hidden');
+  });
+});
+// Job Details Modal logic (with modal tabs)
+const modal = document.getElementById('job-modal');
+const closeModal = document.getElementById('close-modal');
+function showModal() { modal.classList.remove('hidden'); document.body.classList.add('overflow-hidden'); }
+function hideModal() { modal.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+closeModal.addEventListener('click', hideModal);
+window.addEventListener('keydown', e => { if (!modal.classList.contains('hidden') && e.key === 'Escape') hideModal(); });
+document.querySelectorAll('.view-details-btn').forEach(btn => {
+  btn.addEventListener('click', async function() {
+    const jobId = this.getAttribute('data-job-id');
+    const res = await fetch(`/careers/job/${jobId}`);
+    if (!res.ok) return;
+    const job = await res.json();
+    document.getElementById('modal-title').textContent = job.title;
+    document.getElementById('modal-title-icon').textContent = job.title[0];
+    document.getElementById('modal-company').textContent = job.company || 'Company Inc.';
+    document.getElementById('modal-desc').textContent = job.desc;
+    document.getElementById('modal-reqs').textContent = job.requirements;
+    document.getElementById('modal-apply-id').value = job.id;
+    // Show Description tab by default
+    document.querySelectorAll('.modal-tab-content').forEach(tc => tc.classList.add('hidden'));
+    document.getElementById('modal-tab-desc').classList.remove('hidden');
+    showModal();
+  });
+});
+modal.addEventListener('click', e => { if (e.target === modal) hideModal(); });
+document.querySelectorAll('.modal-tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.modal-tab-btn').forEach(b => b.classList.remove('bg-primary','bg-accent','text-white'));
+    this.classList.add('bg-primary','text-white');
+    document.querySelectorAll('.modal-tab-content').forEach(tc => tc.classList.add('hidden'));
+    document.getElementById('modal-tab-' + this.dataset.modalTab).classList.remove('hidden');
+  });
+});
+// Toast logic
+function showToast(msg, color = 'bg-accent') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = `fixed bottom-8 right-8 z-[100] px-6 py-4 font-semibold text-gray-900 text-lg bg-white animate-fade-in border border-gray-300 ${color}`;
+  toast.classList.remove('hidden');
+  setTimeout(() => toast.classList.add('hidden'), 2500);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching functionality
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tabName = this.getAttribute('data-tab');
+      
+      // Update button styles
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('text-gray-900', 'border-black');
+        b.classList.add('text-gray-500', 'border-transparent');
+      });
+      this.classList.remove('text-gray-500', 'border-transparent');
+      this.classList.add('text-gray-900', 'border-black');
+      
+      // Show/hide tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+    });
+  });
+  
+  // Flash messages
+  const flashRaw = document.getElementById('flash-messages').textContent.trim().split('\n');
+  flashRaw.forEach(line => {
+    if (!line) return;
+    const [category, msg] = line.split('|||');
+    let color = 'bg-accent';
+    if (category === 'success') color = 'bg-green-500';
+    else if (category === 'error') color = 'bg-red-500';
+    showToast(msg, color);
+  });
+});
+</script>
+<style>
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.animate-gradient-move {
+  background-size: 200% 200%;
+  animation: gradient-move 8s linear infinite alternate;
+}
+</style>
+<!-- Post Job Modal and Review Applications Modal at the end of the file -->
+<div id="postJobModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4 relative">
+    <button onclick="closePostJobModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold mb-4">Post a Job</h2>
+    <p>Job posting feature coming soon!</p>
+    <div class="mt-6 flex justify-end">
+      <button onclick="closePostJobModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">Close</button>
+    </div>
+  </div>
+</div>
+<div id="reviewApplicationsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4 relative">
+    <button onclick="closeReviewApplicationsModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold mb-4">Review Applications</h2>
+    <p>Application review feature coming soon!</p>
+    <div class="mt-6 flex justify-end">
+      <button onclick="closeReviewApplicationsModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">Close</button>
+    </div>
+  </div>
+</div>
+<script>
+function showPostJobModal(e) {
+  e.preventDefault();
+  document.getElementById('postJobModal').classList.remove('hidden');
+}
+function closePostJobModal() {
+  document.getElementById('postJobModal').classList.add('hidden');
+}
+function showReviewApplicationsModal(e) {
+  e.preventDefault();
+  document.getElementById('reviewApplicationsModal').classList.remove('hidden');
+}
+function closeReviewApplicationsModal() {
+  document.getElementById('reviewApplicationsModal').classList.add('hidden');
+}
+
+function showSkillsTestTab() {
+  // Update button styles
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('text-gray-900', 'border-black');
+    b.classList.add('text-gray-500', 'border-transparent');
+  });
+  
+  // Find and activate the skills test tab
+  const skillsTestTab = document.querySelector('[data-tab="skills-test"]');
+  if (skillsTestTab) {
+    skillsTestTab.classList.remove('text-gray-500', 'border-transparent');
+    skillsTestTab.classList.add('text-gray-900', 'border-black');
+  }
+  
+  // Show/hide tab content
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+  document.getElementById('tab-skills-test').classList.remove('hidden');
+}
+</script>
+{% endblock %} 

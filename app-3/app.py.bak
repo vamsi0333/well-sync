@@ -1,0 +1,654 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, abort
+from datetime import datetime
+import io
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey-employee-portal'
+
+def admin_required():
+    if session.get('role') not in ['hr', 'admin']:
+        abort(403)
+
+@app.route('/')
+def home():
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Only allow two emails: employee@example.com and hr@example.com
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        if email == 'employee@example.com':
+            session['user'] = email
+            session['name'] = 'Employee'
+            session['role'] = 'employee'
+            flash('Welcome back, Employee!', 'success')
+            return redirect(url_for('dashboard'))
+        elif email == 'hr@example.com':
+            session['user'] = email
+            session['name'] = 'HR'
+            session['role'] = 'hr'
+            flash('Welcome back, HR!', 'success')
+            return redirect(url_for('admin_home'))
+        else:
+            flash('Invalid email. Use employee@example.com or hr@example.com.', 'error')
+            return render_template('login.html')
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html', name=session.get('name', 'Employee'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Logged out.', 'info')
+    return redirect(url_for('login'))
+
+# In-memory store for time off requests
+timeoff_requests = []
+
+@app.route('/timeoff', methods=['GET', 'POST'])
+def timeoff():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+
+    if request.method == 'POST':
+        req = {
+            'id': len(timeoff_requests) + 1,
+            'user': user,
+            'type': request.form['type'],
+            'start': request.form['start'],
+            'end': request.form['end'],
+            'reason': request.form['reason'],
+            'status': 'pending',
+            'submitted': datetime.now().strftime('%Y-%m-%d'),
+        }
+        timeoff_requests.append(req)
+        flash('Time off request submitted!', 'success')
+        return redirect(url_for('timeoff'))
+
+    # Show only this user's requests
+    user_requests = [r for r in timeoff_requests if r['user'] == user]
+    return render_template('timeoff.html', requests=user_requests)
+
+@app.route('/timeoff/cancel/<int:req_id>', methods=['POST'])
+def cancel_timeoff(req_id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    for r in timeoff_requests:
+        if r['id'] == req_id and r['user'] == user and r['status'] == 'pending':
+            r['status'] = 'cancelled'
+            flash('Request cancelled.', 'info')
+            break
+    return redirect(url_for('timeoff'))
+
+# In-memory paystubs (simulate for demo)
+paystubs = [
+    {
+        'user': 'employee1@example.com',
+        'date': '2025-06-30',
+        'gross': 4000,
+        'net': 3200,
+        'id': 1,
+        'filename': 'paystub_june2025.pdf'
+    },
+    {
+        'user': 'employee1@example.com',
+        'date': '2025-05-31',
+        'gross': 4000,
+        'net': 3200,
+        'id': 2,
+        'filename': 'paystub_may2025.pdf'
+    }
+]
+
+@app.route('/paystubs')
+def paystubs_page():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    user_paystubs = [p for p in paystubs if p['user'] == user]
+    return render_template('paystubs.html', paystubs=user_paystubs)
+
+@app.route('/paystubs/download/<int:stub_id>')
+def download_paystub(stub_id):
+    # Simulate download (in real app, serve real file)
+    stub = next((p for p in paystubs if p['id'] == stub_id), None)
+    if not stub or stub['user'] != session.get('user'):
+        flash('Not authorized or not found.', 'error')
+        return redirect(url_for('paystubs_page'))
+    # Simulate a PDF file
+    fake_pdf = io.BytesIO(b'%PDF-1.4\n%Fake PDF for demo\n')
+    return send_file(fake_pdf, as_attachment=True, download_name=stub['filename'], mimetype='application/pdf')
+
+# In-memory benefits (simulate for demo)
+benefits = [
+    {
+        'user': 'employee1@example.com',
+        'type': 'Health Insurance',
+        'status': 'enrolled',
+        'deadline': '2025-07-15',
+        'id': 1,
+        'details': 'Comprehensive health plan with $500 deductible.'
+    },
+    {
+        'user': 'employee1@example.com',
+        'type': 'Dental Insurance',
+        'status': 'enrolled',
+        'deadline': '2025-07-15',
+        'id': 2,
+        'details': 'Covers preventive and basic dental care.'
+    },
+    {
+        'user': 'employee1@example.com',
+        'type': 'Vision Insurance',
+        'status': 'not enrolled',
+        'deadline': '2025-07-15',
+        'id': 3,
+        'details': 'Annual eye exam and glasses/contacts coverage.'
+    },
+    {
+        'user': 'employee1@example.com',
+        'type': 'Retirement Plan',
+        'status': 'enrolled',
+        'deadline': '2025-12-31',
+        'id': 4,
+        'details': '401(k) with company match.'
+    }
+]
+
+@app.route('/benefits', methods=['GET', 'POST'])
+def benefits_page():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    user_benefits = [b for b in benefits if b['user'] == user]
+    if request.method == 'POST':
+        action = request.form.get('action')
+        benefit_id = int(request.form.get('benefit_id'))
+        for b in benefits:
+            if b['id'] == benefit_id and b['user'] == user:
+                if action == 'enroll':
+                    b['status'] = 'enrolled'
+                    flash(f'Enrolled in {b["type"]}!', 'success')
+                elif action == 'edit':
+                    # Simulate edit (no real fields to edit in demo)
+                    flash(f'Edit for {b["type"]} saved!', 'success')
+                elif action == 'learn':
+                    flash(f'More info: {b["details"]}', 'info')
+    return render_template('benefits.html', benefits=user_benefits)
+
+# In-memory user profiles (simulate for demo)
+user_profiles = {
+    'employee1@example.com': {
+        'name': 'Employee One',
+        'email': 'employee1@example.com',
+        'department': 'Engineering',
+        'phone': '555-1234',
+        'address': '123 Main St, City',
+        'emergency_name': 'Jane Doe',
+        'emergency_phone': '555-5678',
+        'emergency_relation': 'Spouse'
+    }
+}
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    profile = user_profiles.get(user, {
+        'name': '', 'email': user, 'department': '', 'phone': '', 'address': '',
+        'emergency_name': '', 'emergency_phone': '', 'emergency_relation': ''
+    })
+    if request.method == 'POST':
+        profile['name'] = request.form.get('name', '')
+        profile['department'] = request.form.get('department', '')
+        profile['phone'] = request.form.get('phone', '')
+        profile['address'] = request.form.get('address', '')
+        profile['emergency_name'] = request.form.get('emergency_name', '')
+        profile['emergency_phone'] = request.form.get('emergency_phone', '')
+        profile['emergency_relation'] = request.form.get('emergency_relation', '')
+        user_profiles[user] = profile
+        flash('Profile updated!', 'success')
+    return render_template('profile.html', profile=profile)
+
+# In-memory support tickets (simulate for demo)
+tickets = [
+    {
+        'id': 1,
+        'user': 'employee1@example.com',
+        'subject': 'Can I update my direct deposit info?',
+        'type': 'HR',
+        'urgency': 'Low',
+        'description': 'I want to change my bank account for payroll.',
+        'status': 'open',
+        'date': '2025-07-20',
+        'comments': [
+            {'author': 'HR', 'text': 'You can update it in your profile settings.', 'date': '2025-07-21'}
+        ]
+    },
+    {
+        'id': 2,
+        'user': 'employee1@example.com',
+        'subject': 'Laptop running slow',
+        'type': 'IT',
+        'urgency': 'Medium',
+        'description': 'My laptop is very slow after the last update.',
+        'status': 'open',
+        'date': '2025-07-18',
+        'comments': []
+    }
+]
+
+@app.route('/help', methods=['GET', 'POST'])
+def help_center():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    user_tickets = [t for t in tickets if t['user'] == user]
+    if request.method == 'POST':
+        new_ticket = {
+            'id': len(tickets) + 1,
+            'user': user,
+            'subject': request.form['subject'],
+            'type': request.form['type'],
+            'urgency': request.form['urgency'],
+            'description': request.form['description'],
+            'status': 'open',
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'comments': []
+        }
+        tickets.append(new_ticket)
+        flash('Ticket submitted!', 'success')
+        return redirect(url_for('help_center'))
+    return render_template('help.html', tickets=user_tickets)
+
+@app.route('/ticket/<int:ticket_id>', methods=['GET', 'POST'])
+def ticket_detail(ticket_id):
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    ticket = next((t for t in tickets if t['id'] == ticket_id and t['user'] == session['user']), None)
+    if not ticket:
+        flash('Ticket not found.', 'error')
+        return redirect(url_for('help_center'))
+    if request.method == 'POST':
+        comment = {
+            'author': session.get('name', 'You'),
+            'text': request.form['comment'],
+            'date': datetime.now().strftime('%Y-%m-%d')
+        }
+        ticket['comments'].append(comment)
+        flash('Comment added.', 'success')
+        return redirect(url_for('ticket_detail', ticket_id=ticket_id))
+    return render_template('ticket_detail.html', ticket=ticket)
+
+# In-memory demo data for careers features
+job_listings = [
+    {'id': 1, 'title': 'Software Engineer', 'location': 'Remote', 'type': 'Full-time', 'salary': '120000', 'industry': 'Tech', 'desc': 'Build amazing products.', 'remote': True},
+    {'id': 2, 'title': 'HR Specialist', 'location': 'NYC', 'type': 'Full-time', 'salary': '80000', 'industry': 'HR', 'desc': 'Support our growing team.', 'remote': False},
+    {'id': 3, 'title': 'Data Analyst Intern', 'location': 'Remote', 'type': 'Internship', 'salary': '25000', 'industry': 'Analytics', 'desc': 'Analyze data for insights.', 'remote': True}
+]
+applications = []
+saved_jobs = []
+mentorships = [
+    {'id': 1, 'mentor': 'Jane Doe', 'field': 'Engineering', 'bio': '10 years experience in software.'},
+    {'id': 2, 'mentor': 'John Smith', 'field': 'HR', 'bio': 'HR leader and coach.'}
+]
+upskilling = [
+    {'id': 1, 'title': 'Python Certification', 'provider': 'Coursera', 'desc': 'Learn Python for data science.'},
+    {'id': 2, 'title': 'Project Management', 'provider': 'edX', 'desc': 'Master project management skills.'}
+]
+career_goals = [{'id': 1, 'goal': 'Become a Senior Engineer', 'progress': 60}, {'id': 2, 'goal': 'Get AWS Certification', 'progress': 30}]
+badges = [{'id': 1, 'name': 'Python Certified', 'desc': 'Completed Python course', 'icon': '🐍'}, {'id': 2, 'name': 'Project Manager', 'desc': 'Completed PM course', 'icon': '📈'}]
+course_progress = [{'id': 1, 'title': 'Python Certification', 'progress': 80}, {'id': 2, 'title': 'Project Management', 'progress': 40}]
+resources = [
+    {'id': 1, 'title': 'How to Ace Technical Interviews', 'url': 'https://www.example.com/interview', 'desc': 'Tips and tricks for technical interviews.'},
+    {'id': 2, 'title': 'Coursera: Python for Everybody', 'url': 'https://www.coursera.org/learn/python', 'desc': 'Free Python course.'},
+    {'id': 3, 'title': 'edX: Project Management', 'url': 'https://www.edx.org/course/project-management', 'desc': 'Project management certification.'}
+]
+
+@app.route('/careers', methods=['GET', 'POST'])
+def careers():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    # Simulate AI job matching and filters
+    user_skills = ['python', 'data', 'teamwork']
+    recommended = [j for j in job_listings if any(s in j['desc'].lower() for s in user_skills)]
+    if request.method == 'POST':
+        if 'save_job' in request.form:
+            job_id = int(request.form['save_job'])
+            if job_id not in saved_jobs:
+                saved_jobs.append(job_id)
+                flash('Job saved!', 'success')
+        if 'apply_job' in request.form:
+            job_id = int(request.form['apply_job'])
+            applications.append({'user': session['user'], 'job_id': job_id, 'status': 'applied'})
+            flash('Application submitted!', 'success')
+    return render_template('careers.html', jobs=job_listings, recommended=recommended, saved_jobs=saved_jobs)
+
+@app.route('/careers/applications')
+def careers_applications():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user_apps = [a for a in applications if a['user'] == session['user']]
+    return render_template('careers_applications.html', applications=user_apps, jobs=job_listings)
+
+@app.route('/careers/resume', methods=['GET', 'POST'])
+def careers_resume():
+    feedback = None
+    optimized_resume = None
+    if request.method == 'POST':
+        # Simulate AI feedback
+        feedback = 'Your resume could use more quantifiable achievements.'
+        optimized_resume = 'Optimized Resume: ... (AI rewrite here)'
+    return render_template('careers_resume.html', feedback=feedback, optimized_resume=optimized_resume)
+
+@app.route('/careers/upskilling')
+def careers_upskilling():
+    return render_template('careers_upskilling.html', upskilling=upskilling)
+
+@app.route('/careers/mentorship', methods=['GET', 'POST'])
+def careers_mentorship():
+    if request.method == 'POST':
+        flash('Mentorship request sent!', 'success')
+    return render_template('careers_mentorship.html', mentorships=mentorships)
+
+@app.route('/careers/saved')
+def careers_saved():
+    saved = [j for j in job_listings if j['id'] in saved_jobs]
+    return render_template('careers_saved.html', jobs=saved)
+
+@app.route('/careers/goals', methods=['GET', 'POST'])
+def careers_goals():
+    if request.method == 'POST':
+        new_goal = request.form.get('goal')
+        if new_goal:
+            career_goals.append({'id': len(career_goals)+1, 'goal': new_goal, 'progress': 0})
+            flash('Goal added!', 'success')
+    return render_template('careers_goals.html', goals=career_goals)
+
+@app.route('/careers/badges')
+def careers_badges():
+    return render_template('careers_badges.html', badges=badges)
+
+@app.route('/careers/progress')
+def careers_progress():
+    return render_template('careers_progress.html', courses=course_progress)
+
+@app.route('/careers/resources')
+def careers_resources():
+    return render_template('careers_resources.html', resources=resources)
+
+# In-memory stores for admin management
+leave_requests = []
+timesheets = []
+feedbacks = []
+
+@app.route('/leave', methods=['GET', 'POST'])
+def leave_form():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    if request.method == 'POST':
+        req = {
+            'id': len(leave_requests) + 1,
+            'user': user,
+            'type': request.form.get('type', ''),
+            'start': request.form.get('start', ''),
+            'end': request.form.get('end', ''),
+            'reason': request.form.get('reason', ''),
+            'status': 'pending',
+            'submitted': datetime.now().strftime('%Y-%m-%d'),
+        }
+        leave_requests.append(req)
+        flash('Leave form submitted!', 'success')
+        return redirect(url_for('leave_form'))
+    user_leaves = [r for r in leave_requests if r['user'] == user]
+    return render_template('leave.html', leaves=user_leaves)
+
+@app.route('/timesheet', methods=['GET', 'POST'])
+def timesheet():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = session['user']
+    if request.method == 'POST':
+        ts = {
+            'id': len(timesheets) + 1,
+            'user': user,
+            'week_start': request.form.get('week_start', ''),
+            'hours': request.form.get('hours', ''),
+            'notes': request.form.get('notes', ''),
+            'status': 'pending',
+            'submitted': datetime.now().strftime('%Y-%m-%d'),
+        }
+        timesheets.append(ts)
+        flash('Timesheet submitted!', 'success')
+        return redirect(url_for('timesheet'))
+    user_timesheets = [t for t in timesheets if t['user'] == user]
+    return render_template('timesheet.html', timesheets=user_timesheets)
+
+@app.route('/feedback', methods=['GET', 'POST'])
+def anon_feedback():
+    if request.method == 'POST':
+        fb = {
+            'id': len(feedbacks) + 1,
+            'message': request.form.get('feedback', ''),
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'read': False
+        }
+        feedbacks.append(fb)
+        flash('Thank you for your anonymous feedback!', 'success')
+        return redirect(url_for('anon_feedback'))
+    return render_template('feedback.html')
+
+@app.route('/complimentary', methods=['GET', 'POST'])
+def complimentary():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        flash('Complimentary form submitted!', 'success')
+        return redirect(url_for('complimentary'))
+    return render_template('complimentary.html')
+
+@app.route('/admin')
+def admin_home():
+    admin_required()
+    return render_template('admin_dashboard.html')
+
+@app.route('/admin/timeoff')
+def admin_timeoff():
+    admin_required()
+    return render_template('admin_timeoff.html', requests=timeoff_requests)
+
+@app.route('/admin/paystubs')
+def admin_paystubs():
+    admin_required()
+    return render_template('admin_paystubs.html', paystubs=paystubs)
+
+@app.route('/admin/benefits')
+def admin_benefits():
+    admin_required()
+    return render_template('admin_benefits.html', benefits=benefits)
+
+@app.route('/admin/tickets')
+def admin_tickets():
+    admin_required()
+    return render_template('admin_tickets.html', tickets=tickets)
+
+@app.route('/admin/careers/jobs', methods=['GET', 'POST'])
+def admin_careers_jobs():
+    admin_required()
+    if request.method == 'POST':
+        # Add new job
+        job = {
+            'id': len(job_listings) + 1,
+            'title': request.form['title'],
+            'location': request.form['location'],
+            'type': request.form['type'],
+            'salary': request.form['salary'],
+            'industry': request.form['industry'],
+            'desc': request.form['desc'],
+            'remote': request.form.get('remote') == 'on'
+        }
+        job_listings.append(job)
+        flash('Job added!', 'success')
+    return render_template('admin_careers_jobs.html', jobs=job_listings)
+
+@app.route('/admin/careers/applications')
+def admin_careers_applications():
+    admin_required()
+    return render_template('admin_careers_applications.html', applications=applications, jobs=job_listings)
+
+@app.route('/admin/careers/goals')
+def admin_careers_goals():
+    admin_required()
+    return render_template('admin_careers_goals.html', goals=career_goals)
+
+@app.route('/admin/careers/badges')
+def admin_careers_badges():
+    admin_required()
+    return render_template('admin_careers_badges.html', badges=badges)
+
+@app.route('/admin/careers/progress')
+def admin_careers_progress():
+    admin_required()
+    return render_template('admin_careers_progress.html', courses=course_progress)
+
+@app.route('/admin/careers/resources', methods=['GET', 'POST'])
+def admin_careers_resources():
+    admin_required()
+    if request.method == 'POST':
+        # Add new resource
+        resources.append({
+            'id': len(resources) + 1,
+            'title': request.form['title'],
+            'url': request.form['url'],
+            'desc': request.form['desc']
+        })
+        flash('Resource added!', 'success')
+    return render_template('admin_careers_resources.html', resources=resources)
+
+@app.route('/admin/feedback')
+def admin_feedback():
+    admin_required()
+    return render_template('admin_feedback.html')
+
+@app.route('/admin/complimentary')
+def admin_complimentary():
+    admin_required()
+    return render_template('admin_complimentary.html')
+
+@app.route('/admin/profiles')
+def admin_profiles():
+    admin_required()
+    return render_template('admin_profiles.html', profiles=user_profiles)
+
+@app.route('/admin/leave')
+def admin_leave():
+    admin_required()
+    return render_template('admin_leave.html', leaves=leave_requests)
+
+@app.route('/admin/leave/approve/<int:req_id>', methods=['POST'])
+def admin_approve_leave(req_id):
+    admin_required()
+    for r in leave_requests:
+        if r['id'] == req_id:
+            r['status'] = 'approved'
+            flash('Leave approved!', 'success')
+            break
+    return redirect(url_for('admin_leave'))
+
+@app.route('/admin/leave/reject/<int:req_id>', methods=['POST'])
+def admin_reject_leave(req_id):
+    admin_required()
+    for r in leave_requests:
+        if r['id'] == req_id:
+            r['status'] = 'rejected'
+            flash('Leave rejected.', 'error')
+            break
+    return redirect(url_for('admin_leave'))
+
+@app.route('/admin/timesheets')
+def admin_timesheets():
+    admin_required()
+    return render_template('admin_timesheets.html', timesheets=timesheets)
+
+@app.route('/admin/timesheets/approve/<int:ts_id>', methods=['POST'])
+def admin_approve_timesheet(ts_id):
+    admin_required()
+    for t in timesheets:
+        if t['id'] == ts_id:
+            t['status'] = 'approved'
+            flash('Timesheet approved!', 'success')
+            break
+    return redirect(url_for('admin_timesheets'))
+
+@app.route('/admin/timesheets/reject/<int:ts_id>', methods=['POST'])
+def admin_reject_timesheet(ts_id):
+    admin_required()
+    for t in timesheets:
+        if t['id'] == ts_id:
+            t['status'] = 'rejected'
+            flash('Timesheet rejected.', 'error')
+            break
+    return redirect(url_for('admin_timesheets'))
+
+@app.route('/admin/feedback/all')
+def admin_feedback_all():
+    admin_required()
+    return render_template('admin_feedback_all.html', feedbacks=feedbacks)
+
+@app.route('/admin/feedback/mark-read/<int:fb_id>', methods=['POST'])
+def admin_feedback_mark_read(fb_id):
+    admin_required()
+    for fb in feedbacks:
+        if fb['id'] == fb_id:
+            fb['read'] = True
+            flash('Feedback marked as read.', 'success')
+            break
+    return redirect(url_for('admin_feedback_all'))
+
+@app.route('/admin/announcements', methods=['GET', 'POST'])
+def admin_announcements():
+    admin_required()
+    if request.method == 'POST':
+        title = request.form['title']
+        message = request.form['message']
+        # In a real app, save or broadcast the announcement here
+        flash(f'Announcement "{title}" sent!', 'success')
+        return redirect(url_for('admin_announcements'))
+    return render_template('admin_announcements.html')
+
+@app.route('/admin/documents', methods=['GET', 'POST'])
+def admin_documents():
+    admin_required()
+    if request.method == 'POST':
+        # In a real app, save the uploaded file and document info
+        flash('Document uploaded!', 'success')
+        return redirect(url_for('admin_documents'))
+    return render_template('admin_documents.html')
+
+@app.route('/admin/onboarding', methods=['GET', 'POST'])
+def admin_onboarding():
+    admin_required()
+    if request.method == 'POST':
+        # In a real app, save the onboarding configuration
+        flash('Onboarding configuration saved!', 'success')
+        return redirect(url_for('admin_onboarding'))
+    return render_template('admin_onboarding.html')
+
+@app.route('/admin/logs')
+def admin_logs():
+    admin_required()
+    return render_template('admin_logs.html')
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5002) 

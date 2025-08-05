@@ -1,0 +1,356 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">🧠 Skills Assessment Test</h1>
+        <p class="text-gray-600 dark:text-gray-400">Take our comprehensive skills assessment to identify your strengths and areas for improvement.</p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500 dark:text-gray-400">Time Remaining</div>
+        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="timer">30:00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Instructions -->
+  <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-8">
+    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">Test Instructions</h3>
+    <ul class="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>This test contains 10 multiple-choice questions</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>You have 30 minutes to complete the test</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>Each question has only one correct answer</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>You cannot go back to previous questions once answered</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>Your results will help create a personalized learning roadmap</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Test Form -->
+  <form method="POST" action="/employee/careers/submit-skills-test" class="space-y-8" id="skillsTestForm">
+    <input type="hidden" name="test_type" value="comprehensive">
+    
+    <!-- Question 1 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 1 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is the primary purpose of version control systems like Git?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q1" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To create backups of files</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q1" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To track changes and collaborate on code</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q1" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To compress files for storage</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q1" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To encrypt sensitive data</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 2 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">Which programming paradigm emphasizes objects and classes?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q2" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Functional programming</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q2" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Object-oriented programming</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q2" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Procedural programming</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q2" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Declarative programming</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 3 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is the main advantage of using a database over a simple file system?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q3" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Lower storage costs</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q3" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Better data integrity and query capabilities</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q3" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Faster file access</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q3" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Easier backup process</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 4 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is an API (Application Programming Interface)?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q4" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of programming language</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q4" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A set of rules that allows different software systems to communicate</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q4" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A database management system</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q4" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A web browser</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 5 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is the main principle of Agile methodology?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q5" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Complete planning before starting development</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q5" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Delivering value incrementally and responding to change</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q5" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Following strict documentation requirements</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q5" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Using only waterfall methodology</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 6 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is the purpose of HTTPS in web security?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q6" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To make websites load faster</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q6" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To encrypt data transmission between client and server</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q6" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To compress website content</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q6" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To block unwanted traffic</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 7 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is unit testing?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q7" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Testing the entire application at once</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q7" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Testing individual functions or methods in isolation</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q7" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Testing user interface components</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q7" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">Testing database connections</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 8 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is cloud computing?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q8" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of weather forecasting</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q8" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A technology that provides scalable computing resources over the internet</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q8" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of computer hardware</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q8" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A programming language</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 9 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is a sprint in Agile development?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q9" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of race</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q9" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A time-boxed period that delivers a working increment of the product</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q9" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of meeting</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q9" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">A type of software</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Question 10 of 10</h3>
+        <p class="text-gray-700 dark:text-gray-300">What is the purpose of data visualization?</p>
+      </div>
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q10" value="a" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To make data look pretty</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q10" value="b" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To communicate insights and patterns effectively</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q10" value="c" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To hide important information</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+          <input type="radio" name="q10" value="d" required class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">To increase file sizes</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="flex justify-between items-center pt-6">
+      <a href="/employee/careers" class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
+        Back to Careers
+      </a>
+      <button type="submit" id="submitBtn" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200">
+        Submit Test
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+// Timer functionality
+let timeLeft = 30 * 60; // 30 minutes in seconds
+const timerElement = document.getElementById('timer');
+
+function updateTimer() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  
+  if (timeLeft <= 0) {
+    alert('Time is up! Your test will be submitted automatically.');
+    document.getElementById('skillsTestForm').submit();
+  }
+}
+
+// Update timer every second
+const timerInterval = setInterval(() => {
+  timeLeft--;
+  updateTimer();
+}, 1000);
+
+// Form submission
+document.getElementById('skillsTestForm').addEventListener('submit', function(e) {
+  const requiredFields = document.querySelectorAll('input[type="radio"]:checked');
+  if (requiredFields.length < 10) {
+    e.preventDefault();
+    alert('Please answer all questions before submitting.');
+    return;
+  }
+  
+  // Disable submit button to prevent multiple submissions
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+  clearInterval(timerInterval);
+});
+</script> 

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Induction - Company Resources</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Employee Induction</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('landing_page') }}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        Home
+                    </a>
+                    <a href="{{ url_for('employee_login') }}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        Employee Portal
+                    </a>
+                    <a href="{{ url_for('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200">
+                        Admin Access
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-green-600 to-green-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                    Welcome to Your New Journey
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 text-green-100">
+                    Essential resources and information for your successful onboarding
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#required-documents" class="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
+                        Required Reading
+                    </a>
+                    <a href="#company-resources" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-lg font-semibold text-lg transition duration-200">
+                        Company Resources
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
+                    <input type="text" name="search" id="search" value="{{ search }}"
+                           placeholder="Search for policies, benefits, or guides..."
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                </div>
+
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                    <select name="category" id="category"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition duration-200">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Required Documents Section -->
+    <div id="required-documents" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Required Reading</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Essential documents for all new employees</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for document in documents|selectattr('required', 'equalto', true) %}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <div class="flex items-center mb-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                Required
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            <a href="{{ url_for('view_induction_document', doc_id=document.id) }}" 
+                               class="hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                                {{ document.title }}
+                            </a>
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {{ document.content[:120] }}...
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        {{ document.category }}
+                    </span>
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        {{ document.views }} views
+                    </span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        By {{ document.author }}
+                    </div>
+                    <a href="{{ url_for('view_induction_document', doc_id=document.id) }}" 
+                       class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 text-sm font-medium">
+                        Read Now →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Company Resources Section -->
+    <div id="company-resources" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Company Resources</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Additional information and helpful guides</p>
+        </div>
+
+        <!-- Quick Access Categories -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {% for category in categories %}
+            <a href="?category={{ category }}" 
+               class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-medium text-gray-900 dark:text-white">{{ category }}</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {{ documents|selectattr('category', 'equalto', category)|list|length }} documents
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- All Documents -->
+        {% if documents %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for document in documents %}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            <a href="{{ url_for('view_induction_document', doc_id=document.id) }}" 
+                               class="hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                                {{ document.title }}
+                            </a>
+                        </h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {{ document.content[:120] }}...
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        {{ document.category }}
+                    </span>
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        {{ document.views }} views
+                    </span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        By {{ document.author }}
+                    </div>
+                    <a href="{{ url_for('view_induction_document', doc_id=document.id) }}" 
+                       class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 text-sm font-medium">
+                        Read More →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400">No documents found</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Help Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-green-900 dark:text-green-100 mb-4">Need Help?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-green-900 dark:text-green-100 mb-2">Contact HR</h4>
+                    <p class="text-sm text-green-800 dark:text-green-200">
+                        Have questions about policies, benefits, or onboarding? Contact our HR team.
+                    </p>
+                    <div class="mt-2 text-sm text-green-800 dark:text-green-200">
+                        <p>📧 hr@company.com</p>
+                        <p>📞 (555) 123-4567</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-green-900 dark:text-green-100 mb-2">IT Support</h4>
+                    <p class="text-sm text-green-800 dark:text-green-200">
+                        Need help with technical setup or IT-related questions?
+                    </p>
+                    <div class="mt-2 text-sm text-green-800 dark:text-green-200">
+                        <p>📧 support@company.com</p>
+                        <p>📞 (555) 234-5678</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400">&copy; 2024 Company Name. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

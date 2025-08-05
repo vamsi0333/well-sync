@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Portal</title>
+  <!-- Tailwind CSS 3+ CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: { light: '#a5b4fc', DEFAULT: '#6366f1', dark: '#4338ca' },
+            accent: '#fbbf24',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .transition-bg { transition: background 0.3s, color 0.3s; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-950 dark:to-blue-900 text-gray-900 dark:text-gray-100 min-h-screen font-sans transition-bg">
+  <!-- Navigation Bar -->
+  <nav class="backdrop-blur bg-white/80 dark:bg-gray-900/80 shadow-lg sticky top-0 z-50 transition-bg w-full">
+    <div class="w-full px-12">
+      <div class="flex justify-between items-center h-16 w-full">
+        <!-- Left: Main Navigation -->
+        <div class="flex-1 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-primary/40 scrollbar-track-transparent">
+          <div class="flex items-center space-x-12 min-w-max">
+            <a href="/employee/dashboard" class="flex items-center text-primary font-extrabold text-2xl tracking-tight hover:text-accent transition mr-12">
+              <span class="mr-2">🏢</span> Employee Portal
+            </a>
+            <a href="/employee/dashboard" class="inline text-base font-medium hover:text-accent transition">Dashboard</a>
+            <a href="/employee/compensation" class="inline text-base font-medium hover:text-accent transition">Compensation</a>
+            <a href="/employee/time-management" class="inline text-base font-medium hover:text-accent transition">Time Management</a>
+            <a href="/employee/feedback" class="inline text-base font-medium hover:text-accent transition">Feedback</a>
+            <a href="/employee/careers" class="inline text-base font-medium hover:text-accent transition">Career Development</a>
+            <a href="/employee/groups" class="inline text-base font-medium hover:text-accent transition">Groups</a>
+            <a href="/employee/support" class="inline text-base font-medium hover:text-accent transition">Support</a>
+          </div>
+        </div>
+        <!-- Right: Utility/External/Profile -->
+        <div class="flex items-center space-x-6 ml-8">
+          <a href="/admin/dashboard" class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">IT Portal</a>
+          <button id="theme-toggle" aria-label="Toggle Theme" class="rounded-full p-2 hover:bg-primary/10 dark:hover:bg-primary/20 transition">
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.07l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.93l-.71-.71M12 5a7 7 0 100 14 7 7 0 000-14z"></path></svg>
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"></path></svg>
+          </button>
+          <div class="relative group">
+            <button class="flex items-center text-base font-medium hover:text-accent transition focus:outline-none">
+              <span class="mr-1">👤</span> Profile
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg py-2 opacity-0 group-hover:opacity-100 transition pointer-events-none group-hover:pointer-events-auto z-50">
+              <a href="/employee/profile" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-primary/10 dark:hover:bg-primary/20 transition">View Profile</a>
+              <a href="/employee/logout" class="block px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 transition">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- Main Content -->
+  <main class="p-4 sm:p-8 w-full">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-2 mb-4">
+          {% for category, message in messages %}
+            <div class="p-3 rounded-lg shadow text-sm font-medium animate-fade-in
+              {% if category == 'success' %}bg-green-500/90 text-white
+              {% elif category == 'error' %}bg-red-500/90 text-white
+              {% elif category == 'info' %}bg-blue-500/90 text-white
+              {% else %}bg-gray-700/80 text-white{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    // Theme toggle logic with localStorage
+    const themeToggle = document.getElementById('theme-toggle');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    
+    function setTheme(dark) {
+      if (dark) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    
+    (function() {
+      const userTheme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(userTheme === 'dark' || (!userTheme && systemDark));
+    })();
+    
+    // Theme toggle event
+    themeToggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(!isDark);
+    });
+  </script>
+</body>
+</html> 

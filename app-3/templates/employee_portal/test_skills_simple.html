@@ -1,0 +1,48 @@
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold text-gray-900 mb-4">🧠 Skills Assessment Test</h1>
+  <p class="text-gray-600 mb-6">This is a simple test of the skills assessment content.</p>
+  
+  <div class="bg-blue-50 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-900 mb-4">Test Instructions</h3>
+    <ul class="space-y-2 text-sm text-blue-800">
+      <li>This test contains 10 multiple-choice questions</li>
+      <li>You have 30 minutes to complete the test</li>
+      <li>Each question has only one correct answer</li>
+    </ul>
+  </div>
+  
+  <form method="POST" action="/employee/careers/submit-skills-test" class="mt-6">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Question 1 of 10</h3>
+      <p class="text-gray-700 mb-4">What is the primary purpose of version control systems like Git?</p>
+      
+      <div class="space-y-3">
+        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <input type="radio" name="q1" value="a" required class="w-4 h-4 text-blue-600">
+          <span class="ml-3 text-gray-700">To create backups of files</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <input type="radio" name="q1" value="b" required class="w-4 h-4 text-blue-600">
+          <span class="ml-3 text-gray-700">To track changes and collaborate on code</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <input type="radio" name="q1" value="c" required class="w-4 h-4 text-blue-600">
+          <span class="ml-3 text-gray-700">To compress files for storage</span>
+        </label>
+        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+          <input type="radio" name="q1" value="d" required class="w-4 h-4 text-blue-600">
+          <span class="ml-3 text-gray-700">To encrypt sensitive data</span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="mt-6 flex justify-between">
+      <a href="/employee/careers" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+        Cancel
+      </a>
+      <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+        Submit Test
+      </button>
+    </div>
+  </form>
+</div> 

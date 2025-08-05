@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Careers Portal</title>
+    <style>
+        .tab-btn { padding: 10px; margin: 5px; cursor: pointer; }
+        .tab-content { padding: 20px; border: 1px solid #ccc; margin: 10px; }
+        .hidden { display: none; }
+        .active { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Debug Careers Portal</h1>
+    
+    <!-- Tab Buttons -->
+    <div>
+        <button class="tab-btn active" data-tab="jobs">Jobs</button>
+        <button class="tab-btn" data-tab="skills-test">Skills Test</button>
+        <button class="tab-btn" data-tab="internal-jobs">Internal Jobs</button>
+    </div>
+    
+    <!-- Tab Contents -->
+    <div id="tab-jobs" class="tab-content">
+        <h2>Jobs Tab</h2>
+        <p>This is the jobs tab content.</p>
+    </div>
+    
+    <div id="tab-skills-test" class="tab-content hidden">
+        <h2>Skills Test Tab</h2>
+        <p>This is the skills test tab content.</p>
+        <p>If you can see this, the tab switching is working!</p>
+    </div>
+    
+    <div id="tab-internal-jobs" class="tab-content hidden">
+        <h2>Internal Jobs Tab</h2>
+        <p>This is the internal jobs tab content.</p>
+    </div>
+    
+    <script>
+        // Simple tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                console.log('Clicked tab:', tabName);
+                
+                // Update button styles
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show/hide tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                const targetContent = document.getElementById('tab-' + tabName);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    console.log('Showing content for tab:', tabName);
+                } else {
+                    console.error('Could not find content for tab:', tabName);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

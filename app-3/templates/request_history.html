@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Your Request History</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Track and manage your IT service requests</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a href="/submit-request" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        New Request
+      </a>
+    </div>
+  </div>
+
+  <!-- AI Assistant Widget -->
+  <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-xl">
+    <div class="flex items-center justify-between">
+      <div class="flex-1">
+        <h3 class="text-xl font-bold mb-2 flex items-center">
+          <span class="mr-2">🤖</span> AI Assistant
+        </h3>
+        <p class="text-green-100 mb-4">Need help with your requests? Ask me anything!</p>
+        <div class="flex gap-3">
+          <input type="text" id="ai-question" placeholder="Ask about your requests..." 
+                 class="flex-1 px-4 py-2 rounded-lg bg-white/20 backdrop-blur-sm text-white placeholder-green-200 border border-white/30 focus:border-white/50 focus:outline-none">
+          <button onclick="askAI()" class="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-lg font-semibold hover:bg-white/30 transition-all duration-300">
+            Ask AI
+          </button>
+        </div>
+        <div id="ai-response" class="hidden bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-3">
+          <p id="ai-answer" class="text-green-100"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if requests %}
+    <div class="space-y-4">
+    {% for req in requests %}
+        <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+            <div class="flex-1">
+              <div class="flex items-center mb-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ req.subject }}</h2>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ req.type|capitalize }} Request</p>
+                </div>
+        </div>
+
+              <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">{{ req.description }}</p>
+              
+              <div class="flex flex-wrap gap-3 mb-4">
+                <!-- Status Badge -->
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+                  {% if req.status == 'approved' %}
+                    bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                  {% elif req.status == 'pending' %}
+                    bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                  {% elif req.status == 'cancelled' %}
+                    bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                  {% else %}
+                    bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                  {% endif %}">
+                  <span class="w-2 h-2 rounded-full mr-2
+                    {% if req.status == 'approved' %}bg-green-500
+                    {% elif req.status == 'pending' %}bg-yellow-500
+                    {% elif req.status == 'cancelled' %}bg-blue-500
+                    {% else %}bg-red-500{% endif %}"></span>
+            {{ req.status|capitalize }}
+          </span>
+        </div>
+
+        {% if req.hr_comment %}
+                <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+                  <p class="text-sm text-blue-800 dark:text-blue-200">
+                    <span class="font-semibold">HR Comment:</span> {{ req.hr_comment }}
+                  </p>
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="mt-4 sm:mt-0 sm:ml-4">
+              {% if req.status == 'pending' %}
+                <form method="POST" action="/cancel-request/{{ req.id }}" class="inline">
+                  <button type="submit" 
+                    class="inline-flex items-center px-4 py-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 font-medium rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                    onclick="return confirm('Are you sure you want to cancel this request?')">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Cancel Request
+                  </button>
+                </form>
+        {% endif %}
+            </div>
+          </div>
+      </div>
+    {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white/90 dark:bg-gray-900/90 p-12 rounded-2xl shadow-xl backdrop-blur text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Requests Yet</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">You haven't submitted any service requests yet.</p>
+      <a href="/submit-request" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Submit Your First Request
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function askAI() {
+    const question = document.getElementById('ai-question').value;
+    if (!question.trim()) {
+        alert('Please enter a question');
+        return;
+    }
+
+    fetch('/api/ai-assistant', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question: question })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('ai-answer').textContent = data.answer;
+        document.getElementById('ai-response').classList.remove('hidden');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('ai-answer').textContent = 'Sorry, I encountered an error. Please try again.';
+        document.getElementById('ai-response').classList.remove('hidden');
+    });
+}
+
+// Allow Enter key to submit
+document.getElementById('ai-question').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        askAI();
+    }
+});
+</script>
+{% endblock %}

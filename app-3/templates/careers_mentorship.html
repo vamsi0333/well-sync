@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-10">
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">🤝</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">Mentorship Network</h1>
+      <p class="text-lg text-white/90">Request or offer mentorship. Connect with experienced professionals in your field.</p>
+    </div>
+  </div>
+  <form method="post" class="mb-8 animate-fade-in">
+    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all">Request Mentorship</button>
+  </form>
+  <div class="mt-8 animate-fade-in">
+    {% if mentorships %}
+      <div class="space-y-6">
+        {% for m in mentorships %}
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div>
+            <div class="font-bold text-lg text-primary">{{ m.mentor }}</div>
+            <div class="text-gray-500 dark:text-gray-400 text-sm">{{ m.field }}</div>
+            <div class="text-gray-700 dark:text-gray-300 text-sm mt-1">{{ m.bio }}</div>
+          </div>
+          <a href="#" class="mt-4 sm:mt-0 px-6 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Offer Mentorship</a>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="flex flex-col items-center justify-center py-16">
+        <div class="text-6xl mb-4">🤝</div>
+        <div class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">No mentors yet</div>
+        <div class="text-gray-500 dark:text-gray-400 mb-4">Check back soon for new connections!</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

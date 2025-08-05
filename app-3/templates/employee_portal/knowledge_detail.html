@@ -1,0 +1,60 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block title %}{{ document.title }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ document.title }}</h1>
+                    <p class="text-gray-600 mt-2">{{ document.category }} • {{ document.created_at }}</p>
+                </div>
+                <a href="{{ url_for('employee_knowledge') }}" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    ← Back to Knowledge
+                </a>
+            </div>
+        </div>
+
+        <!-- Document Content -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="prose max-w-none">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Document Details</h2>
+                
+                <div class="mb-6">
+                    <h3 class="font-medium text-gray-900 mb-2">Description</h3>
+                    <p class="text-gray-700">{{ document.description }}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="font-medium text-gray-900 mb-2">Content</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ document.content }}</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="font-medium text-gray-900">Category:</span>
+                        <span class="text-gray-700 ml-2">{{ document.category }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-gray-900">Created:</span>
+                        <span class="text-gray-700 ml-2">{{ document.created_at }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-gray-900">Author:</span>
+                        <span class="text-gray-700 ml-2">{{ document.author }}</span>
+                    </div>
+                    <div>
+                        <span class="font-medium text-gray-900">Status:</span>
+                        <span class="text-gray-700 ml-2">{{ document.status }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

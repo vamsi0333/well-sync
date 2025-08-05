@@ -1,0 +1,254 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Leave Requests</h1>
+    <p class="text-gray-600 dark:text-gray-400">Submit and manage your leave requests.</p>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Requests</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ leave_requests|length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pending</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ leave_requests|selectattr('status', 'equalto', 'pending')|list|length }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Approved</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ leave_requests|selectattr('status', 'equalto', 'approved')|list|length }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Days</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ leave_requests|sum(attribute='total_days') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit New Leave Request -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Submit Leave Request</h2>
+    
+    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label for="leave_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Leave Type *
+        </label>
+        <select name="leave_type" id="leave_type" required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">Select leave type</option>
+          {% for leave_type in leave_types %}
+          <option value="{{ leave_type }}">{{ leave_type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Start Date *
+        </label>
+        <input type="date" name="start_date" id="start_date" required
+               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div>
+        <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          End Date *
+        </label>
+        <input type="date" name="end_date" id="end_date" required
+               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div class="md:col-span-2">
+        <label for="reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Reason *
+        </label>
+        <textarea name="reason" id="reason" rows="4" required
+                  placeholder="Please provide a detailed reason for your leave request..."
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+      </div>
+
+      <div class="md:col-span-2 flex justify-end">
+        <button type="submit" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200">
+          Submit Request
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Leave Requests History -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Leave History</h2>
+    </div>
+
+    {% if leave_requests %}
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Dates</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Days</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Reason</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Submitted</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {% for leave in leave_requests|sort(attribute='submitted_at', reverse=true) %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm font-medium text-gray-900 dark:text-white">{{ leave.leave_type }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              {{ leave.start_date }} to {{ leave.end_date }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              {{ leave.total_days }} days
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+              <div class="max-w-xs truncate" title="{{ leave.reason }}">
+                {{ leave.reason }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                {% if leave.status == 'pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                {% elif leave.status == 'approved' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                {% elif leave.status == 'rejected' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                {% elif leave.status == 'cancelled' %}bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200
+                {% else %}bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200{% endif %}">
+                {{ leave.status|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              {{ leave.submitted_at }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <a href="{{ url_for('view_leave_request', leave_id=leave.id) }}" 
+                 class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                View
+              </a>
+              {% if leave.status == 'pending' %}
+              <form method="POST" action="{{ url_for('cancel_leave_request', leave_id=leave.id) }}" class="inline">
+                <button type="submit" onclick="return confirm('Are you sure you want to cancel this leave request?')"
+                        class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                  Cancel
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+      <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      <p class="text-gray-500 dark:text-gray-400">No leave requests found</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Leave Policy Information -->
+  <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">Leave Policy Information</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Vacation Leave</h4>
+        <p class="text-sm text-blue-800 dark:text-blue-200">
+          Full-time employees receive 20 vacation days per year. Requests should be submitted at least 2 weeks in advance.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Sick Leave</h4>
+        <p class="text-sm text-blue-800 dark:text-blue-200">
+          Employees receive 10 sick days per year. Sick leave can be used for personal illness or medical appointments.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Personal Leave</h4>
+        <p class="text-sm text-blue-800 dark:text-blue-200">
+          Up to 5 personal days per year for personal matters. Requests should be submitted at least 1 week in advance.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Contact Information</h4>
+        <p class="text-sm text-blue-800 dark:text-blue-200">
+          For questions about leave policies, contact HR at hr@company.com or call (555) 123-4567.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Set minimum date for start and end date inputs
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('start_date').min = today;
+  document.getElementById('end_date').min = today;
+  
+  // Update end date minimum when start date changes
+  document.getElementById('start_date').addEventListener('change', function() {
+    document.getElementById('end_date').min = this.value;
+  });
+});
+</script>
+{% endblock %} 

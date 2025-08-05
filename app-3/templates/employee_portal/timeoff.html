@@ -1,0 +1,92 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-10">
+  <!-- Hero Card -->
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">🌴</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">Request Time Off</h1>
+      <p class="text-lg text-white/90">Plan your next break! Submit vacation, sick, or unpaid leave requests below.</p>
+    </div>
+  </div>
+
+  <!-- Time Off Request Form -->
+  <form method="post" class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 space-y-6 animate-fade-in">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+        <select name="type" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+          <option value="Vacation">🌴 Vacation</option>
+          <option value="Sick">🤒 Sick</option>
+          <option value="Unpaid">💸 Unpaid</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+        <input type="date" name="start" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+        <input type="date" name="end" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary" required>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reason</label>
+        <input type="text" name="reason" placeholder="Optional" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+      </div>
+    </div>
+    <div class="flex justify-end mt-8">
+      <button type="submit" class="px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Submit Request</button>
+    </div>
+  </form>
+
+  <!-- Upcoming & Past Requests -->
+  <div class="mt-12 animate-fade-in">
+    <h2 class="text-2xl font-bold text-primary mb-4 flex items-center"><span class="mr-2">📅</span> My Time Off Requests</h2>
+    {% if requests %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for req in requests|sort(attribute='start', reverse=True) %}
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 flex flex-col space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">
+                {% if req.type == 'Vacation' %}🌴{% elif req.type == 'Sick' %}🤒{% else %}💸{% endif %}
+              </span>
+              <span class="font-semibold text-lg">{{ req.type }}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold
+              {% if req.status == 'pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+              {% elif req.status == 'approved' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+              {% elif req.status == 'rejected' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+              {% elif req.status == 'cancelled' %}bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300
+              {% endif %}">
+              {{ req.status|capitalize }}
+            </span>
+          </div>
+          <div class="flex items-center space-x-2 text-gray-500 dark:text-gray-400 text-sm">
+            <span>From <span class="font-semibold text-gray-700 dark:text-gray-200">{{ req.start }}</span></span>
+            <span>to <span class="font-semibold text-gray-700 dark:text-gray-200">{{ req.end }}</span></span>
+          </div>
+          {% if req.reason %}
+          <div class="text-gray-600 dark:text-gray-300 text-sm mt-1">Reason: {{ req.reason }}</div>
+          {% endif %}
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-xs text-gray-400">Submitted: {{ req.submitted }}</span>
+            {% if req.status == 'pending' %}
+            <form method="post" action="/timeoff/cancel/{{ req.id }}" onsubmit="return confirm('Cancel this request?');">
+              <button type="submit" class="text-red-500 hover:underline text-xs font-semibold">Cancel</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="flex flex-col items-center justify-center py-16">
+        <div class="text-6xl mb-4">🗓️</div>
+        <div class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">No time off requests yet</div>
+        <div class="text-gray-500 dark:text-gray-400 mb-4">Submit your first request using the form above!</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

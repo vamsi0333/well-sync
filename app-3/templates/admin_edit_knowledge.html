@@ -1,0 +1,83 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Edit Knowledge Document</h1>
+        <p class="text-gray-600 dark:text-gray-400">Update knowledge base document</p>
+      </div>
+      <div class="flex space-x-3">
+        <a href="/admin/knowledge" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Knowledge
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <form method="POST" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+          <input type="text" id="title" name="title" value="{{ document.title }}" required
+                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+          <select id="category" name="category" required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="">Select Category</option>
+            {% for category in categories %}
+            <option value="{{ category }}" {% if document.category == category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      
+      <div>
+        <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
+        <select id="type" name="type" required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">Select Type</option>
+          <option value="article" {% if document.type == 'article' %}selected{% endif %}>Article</option>
+          <option value="guide" {% if document.type == 'guide' %}selected{% endif %}>Guide</option>
+          <option value="tutorial" {% if document.type == 'tutorial' %}selected{% endif %}>Tutorial</option>
+          <option value="faq" {% if document.type == 'faq' %}selected{% endif %}>FAQ</option>
+          <option value="policy" {% if document.type == 'policy' %}selected{% endif %}>Policy</option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+        <textarea id="description" name="description" rows="3" required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ document.description }}</textarea>
+      </div>
+      
+      <div>
+        <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content</label>
+        <textarea id="content" name="content" rows="10" required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ document.content }}</textarea>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <a href="/admin/knowledge" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition">
+          Cancel
+        </a>
+        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Update Document
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-10">
+  <!-- Ticket Info Card -->
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">{% if ticket.type == 'HR' %}🧑‍💼{% else %}💻{% endif %}</div>
+    <div class="flex-1">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-1">{{ ticket.subject }}</h1>
+      <div class="flex items-center space-x-3 mb-2">
+        <span class="px-3 py-1 rounded-full text-xs font-bold
+          {% if ticket.status == 'open' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+          {% elif ticket.status == 'closed' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+          {% endif %}">
+          {{ ticket.status|capitalize }}
+        </span>
+        <span class="text-xs text-white/80">Urgency: {{ ticket.urgency }}</span>
+        <span class="text-xs text-white/80">Date: {{ ticket.date }}</span>
+      </div>
+      <div class="text-white/90 text-sm">{{ ticket.description }}</div>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 animate-fade-in">
+    <h2 class="text-lg font-bold text-primary mb-4 flex items-center"><span class="mr-2">💬</span> Comments</h2>
+    {% if ticket.comments %}
+      <div class="space-y-4">
+        {% for c in ticket.comments %}
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
+            {{ c.author[0] if c.author else '?' }}
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center space-x-2">
+              <span class="font-semibold text-gray-900 dark:text-white">{{ c.author }}</span>
+              <span class="text-xs text-gray-400">{{ c.date }}</span>
+            </div>
+            <div class="text-gray-700 dark:text-gray-200">{{ c.text }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="flex flex-col items-center justify-center py-8">
+        <div class="text-4xl mb-2">💬</div>
+        <div class="text-gray-500 dark:text-gray-400">No comments yet. Start the conversation below!</div>
+      </div>
+    {% endif %}
+    <form method="post" class="mt-8 space-y-4">
+      <textarea name="comment" rows="2" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary" placeholder="Add a comment..."></textarea>
+      <div class="flex justify-end">
+        <button type="submit" class="px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Post Comment</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

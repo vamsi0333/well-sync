@@ -1,0 +1,273 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">🤖 AI Tools Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Advanced AI-powered tools for recruitment and support</p>
+  </div>
+
+  <!-- AI Overview -->
+  <div class="grid md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🤖</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">ATS System</h3>
+          <p class="text-2xl font-bold text-blue-600">Active</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">AI recruitment</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💬</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">AI Assistant</h3>
+          <p class="text-2xl font-bold text-green-600">Online</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">RAG-powered</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📊</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Accuracy</h3>
+          <p class="text-2xl font-bold text-purple-600">94.2%</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">AI performance</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">⚡</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Speed</h3>
+          <p class="text-2xl font-bold text-orange-600">2.3s</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Avg processing</p>
+    </div>
+  </div>
+
+  <!-- AI Tools Grid -->
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- ATS System -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🤖</div>
+        <div>
+          <h3 class="text-xl font-bold text-primary">ATS System</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">AI-powered Applicant Tracking System</p>
+        </div>
+      </div>
+      
+      <div class="space-y-4 mb-6">
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4">
+          <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Key Features</h4>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>AI-powered resume screening</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Skills matching algorithm</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Automated candidate ranking</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Interview scheduling</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600">1,247</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Resumes Processed</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600">94.2%</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Accuracy Rate</div>
+          </div>
+        </div>
+      </div>
+      
+      <a href="/ai/ats" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+        <span>🚀</span>
+        <span>Launch ATS System</span>
+      </a>
+    </div>
+
+    <!-- AI Assistant -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💬</div>
+        <div>
+          <h3 class="text-xl font-bold text-primary">AI Assistant</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">RAG-powered knowledge assistant</p>
+        </div>
+      </div>
+      
+      <div class="space-y-4 mb-6">
+        <div class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg p-4">
+          <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Capabilities</h4>
+          <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Knowledge base queries</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Document analysis</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Context-aware responses</span>
+            </li>
+            <li class="flex items-center space-x-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Multi-language support</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600">2.3s</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Avg Response Time</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-600">500+</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Documents Indexed</div>
+          </div>
+        </div>
+      </div>
+      
+      <a href="/ai/rag" class="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+        <span>💬</span>
+        <span>Start Chat</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- AI Analytics -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
+    <h2 class="text-2xl font-bold text-primary mb-6">AI Performance Analytics</h2>
+    
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- ATS Analytics -->
+      <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">🤖 ATS Analytics</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Resumes Processed:</span>
+            <span class="text-sm font-medium">1,247</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Time Saved:</span>
+            <span class="text-sm font-medium">85 hours/week</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Success Rate:</span>
+            <span class="text-sm font-medium">87%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Avg Processing:</span>
+            <span class="text-sm font-medium">2.3 seconds</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Assistant Analytics -->
+      <div class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg p-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">💬 AI Assistant Analytics</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Queries Handled:</span>
+            <span class="text-sm font-medium">2,847</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Avg Response Time:</span>
+            <span class="text-sm font-medium">2.3 seconds</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Satisfaction Rate:</span>
+            <span class="text-sm font-medium">92%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Documents Indexed:</span>
+            <span class="text-sm font-medium">500+</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Performance -->
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">⚡ System Performance</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Uptime:</span>
+            <span class="text-sm font-medium">99.9%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">CPU Usage:</span>
+            <span class="text-sm font-medium">23%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Memory Usage:</span>
+            <span class="text-sm font-medium">45%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Active Users:</span>
+            <span class="text-sm font-medium">47</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-4 gap-4">
+      <a href="/ai/ats" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <div class="font-semibold">ATS System</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">AI recruitment tools</div>
+        </div>
+      </a>
+      <a href="/ai/rag" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">💬</span>
+        <div>
+          <div class="font-semibold">AI Assistant</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Knowledge queries</div>
+        </div>
+      </a>
+      <a href="/ai/analytics" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📊</span>
+        <div>
+          <div class="font-semibold">Analytics</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Performance insights</div>
+        </div>
+      </a>
+      <a href="/ai/settings" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">⚙️</span>
+        <div>
+          <div class="font-semibold">Settings</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Configure AI tools</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %} 

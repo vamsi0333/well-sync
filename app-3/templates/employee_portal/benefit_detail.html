@@ -1,0 +1,95 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Benefit Details</h1>
+        <p class="text-gray-600 dark:text-gray-400">{{ benefit.name }} - {{ benefit.provider }}</p>
+      </div>
+      <a href="/employee/benefits" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+        ← Back to Benefits
+      </a>
+    </div>
+  </div>
+
+  <!-- Benefit Details -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Basic Information -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Basic Information</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Benefit Name:</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ benefit.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Provider:</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ benefit.provider }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Type:</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ benefit.type }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Coverage:</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ benefit.coverage }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Status:</span>
+            <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              {{ benefit.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost Breakdown -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Cost Breakdown</h2>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Monthly Cost:</span>
+            <span class="font-medium text-gray-900 dark:text-white">${{ "%.2f"|format(benefit.monthly_cost) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Employee Cost:</span>
+            <span class="font-medium text-gray-900 dark:text-white">${{ "%.2f"|format(benefit.employee_cost) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600 dark:text-gray-400">Employer Contribution:</span>
+            <span class="font-medium text-gray-900 dark:text-white">${{ "%.2f"|format(benefit.employer_contribution) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div class="flex space-x-4">
+        <button onclick="contactProvider()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+          📞 Contact Provider
+        </button>
+        <button onclick="updateBenefit()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+          ✏️ Update Benefit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function contactProvider() {
+  // Mock contact functionality
+  alert('Contact provider functionality would be implemented here.');
+}
+
+function updateBenefit() {
+  // Mock update functionality
+  alert('Update benefit functionality would be implemented here.');
+}
+</script>
+{% endblock %} 

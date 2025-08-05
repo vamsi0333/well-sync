@@ -1,0 +1,386 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+  <!-- Profile Header -->
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8">
+    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+      <!-- Profile Picture -->
+      <div class="relative">
+        <div class="w-32 h-32 rounded-full bg-white/30 flex items-center justify-center text-4xl font-bold text-white shadow-lg border-4 border-white overflow-hidden">
+          {% if profile and profile.profile_picture %}
+            <img src="{{ url_for('static', filename=profile.profile_picture) }}" alt="Profile Picture" class="w-full h-full object-cover">
+          {% else %}
+            {{ user[0] if user else 'E' }}
+          {% endif %}
+        </div>
+        <button onclick="document.getElementById('profile-picture-input').click()" class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Profile Info -->
+      <div class="flex-1 text-center md:text-left">
+        <h1 class="text-4xl font-bold text-white mb-2">{{ user or 'Employee' }}</h1>
+        <p class="text-xl text-white/90 mb-4">{{ profile.position if profile and profile.position else 'Employee' }}</p>
+        <div class="flex flex-wrap justify-center md:justify-start gap-4 text-white/90">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            <span>{{ profile.department if profile and profile.department else 'Department' }}</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>{{ profile.hire_date if profile and profile.hire_date else 'Hire Date' }}</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span>{{ profile.work_location if profile and profile.work_location else 'Location' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Stats -->
+      <div class="flex flex-col space-y-4">
+        <div class="bg-white/20 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-white">12</div>
+          <div class="text-sm text-white/80">Badges Earned</div>
+        </div>
+        <div class="bg-white/20 rounded-lg p-4 text-center">
+          <div class="text-2xl font-bold text-white">85%</div>
+          <div class="text-sm text-white/80">Learning Progress</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Personal Info & Skills -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Personal Information -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+          Personal Information
+        </h2>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+          <input type="file" id="profile-picture-input" name="profile_picture" accept="image/*" class="hidden">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+              <input type="text" name="full_name" value="{{ user }}" 
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+              <input type="email" value="{{ user }}" disabled
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-400">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
+              <input type="tel" name="phone" value="{{ profile.phone if profile and profile.phone else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Position</label>
+              <input type="text" name="position" value="{{ profile.position if profile and profile.position else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Department</label>
+              <input type="text" name="department" value="{{ profile.department if profile and profile.department else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manager</label>
+              <input type="text" name="manager" value="{{ profile.manager if profile and profile.manager else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
+            <textarea name="address" rows="3" 
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">{{ profile.address if profile and profile.address else '' }}</textarea>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Emergency Contact</label>
+              <input type="text" name="emergency_contact" value="{{ profile.emergency_contact if profile and profile.emergency_contact else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Emergency Phone</label>
+              <input type="tel" name="emergency_phone" value="{{ profile.emergency_phone if profile and profile.emergency_phone else '' }}"
+                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+            </div>
+          </div>
+          
+          <div class="flex justify-end">
+            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Skills & Expertise -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          </svg>
+          Skills & Expertise
+        </h2>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Technical Skills</label>
+            <textarea name="skills" rows="3" placeholder="Python, JavaScript, React, Node.js, SQL..."
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">{{ profile.skills if profile and profile.skills else '' }}</textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Interests & Hobbies</label>
+            <textarea name="interests" rows="3" placeholder="Machine Learning, Open Source, Photography..."
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">{{ profile.interests if profile and profile.interests else '' }}</textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
+            <textarea name="bio" rows="4" placeholder="Tell us about yourself..."
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">{{ profile.bio if profile and profile.bio else '' }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Links -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+          </svg>
+          Social Links
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">LinkedIn</label>
+            <input type="url" name="linkedin" value="{{ profile.linkedin if profile and profile.linkedin else '' }}"
+                   placeholder="https://linkedin.com/in/yourprofile"
+                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GitHub</label>
+            <input type="url" name="github" value="{{ profile.github if profile and profile.github else '' }}"
+                   placeholder="https://github.com/yourusername"
+                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Website</label>
+            <input type="url" name="website" value="{{ profile.website if profile and profile.website else '' }}"
+                   placeholder="https://yourwebsite.com"
+                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Badges & Stats -->
+    <div class="space-y-8">
+      <!-- Badges Earned -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.143L13 21l-2.286-6.857L5 12l5.714-3.143L13 3z"></path>
+          </svg>
+          Badges Earned
+        </h2>
+        
+        <div class="space-y-4">
+          <div class="flex items-center p-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">🥇</span>
+            <div>
+              <div class="font-semibold">Python Expert</div>
+              <div class="text-sm opacity-90">Advanced Python programming skills</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center p-3 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">🤝</span>
+            <div>
+              <div class="font-semibold">Team Player</div>
+              <div class="text-sm opacity-90">Excellent collaboration skills</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center p-3 bg-gradient-to-r from-green-400 to-teal-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">🧠</span>
+            <div>
+              <div class="font-semibold">Problem Solver</div>
+              <div class="text-sm opacity-90">Strong analytical thinking</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center p-3 bg-gradient-to-r from-pink-400 to-red-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">👑</span>
+            <div>
+              <div class="font-semibold">Leadership</div>
+              <div class="text-sm opacity-90">Demonstrated leadership abilities</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center p-3 bg-gradient-to-r from-indigo-400 to-blue-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">🗣️</span>
+            <div>
+              <div class="font-semibold">Communication Pro</div>
+              <div class="text-sm opacity-90">Excellent communication skills</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center p-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg text-white">
+            <span class="text-2xl mr-3">💡</span>
+            <div>
+              <div class="font-semibold">Innovation</div>
+              <div class="text-sm opacity-90">Creative problem solving</div>
+            </div>
+          </div>
+        </div>
+        
+        <a href="/employee/careers/badges" class="block mt-4 text-center text-primary hover:text-primary/80 font-medium">
+          View All Badges →
+        </a>
+      </div>
+
+      <!-- Performance Stats -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Performance Stats
+        </h2>
+        
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Learning Progress</span>
+            <span class="font-semibold text-gray-900 dark:text-white">85%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Courses Completed</span>
+            <span class="font-semibold text-gray-900 dark:text-white">12</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Average Score</span>
+            <span class="font-semibold text-gray-900 dark:text-white">92%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-500 h-2 rounded-full" style="width: 92%"></div>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Projects Completed</span>
+            <span class="font-semibold text-gray-900 dark:text-white">8</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-purple-500 h-2 rounded-full" style="width: 80%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Recent Activity
+        </h2>
+        
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">Completed Python Course</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</div>
+            </div>
+          </div>
+          
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 3.143L13 21l-2.286-6.857L5 12l5.714-3.143L13 3z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">Earned Team Player Badge</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">1 day ago</div>
+            </div>
+          </div>
+          
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">Started Data Science Course</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">3 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Handle profile picture upload
+document.getElementById('profile-picture-input').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      const profilePic = document.querySelector('.w-32.h-32 img');
+      if (profilePic) {
+        profilePic.src = e.target.result;
+      } else {
+        const container = document.querySelector('.w-32.h-32');
+        container.innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="w-full h-full object-cover">`;
+      }
+    };
+    
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %} 

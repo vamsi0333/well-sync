@@ -1,0 +1,140 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-10">
+  <!-- Hero Welcome Card -->
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 mb-6 animate-fade-in">
+    <div class="flex-shrink-0">
+      <div class="w-20 h-20 rounded-full bg-white/30 flex items-center justify-center text-4xl font-bold text-primary shadow-lg border-4 border-white">
+        {{ name[0] if name else 'E' }}
+      </div>
+    </div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">Welcome back, {{ name or 'Employee' }}!</h1>
+      <p class="text-lg text-white/90">Here's a quick overview of your work life. Let's make today productive!</p>
+    </div>
+    <div class="hidden md:flex flex-col space-y-2">
+      <a href="/employee/profile" class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 transition flex items-center"><span class="mr-2">👤</span> Update Profile</a>
+      <a href="/employee/leave" class="px-4 py-2 rounded-lg bg-white/20 text-white font-semibold hover:bg-white/30 transition flex items-center"><span class="mr-2">🌴</span> Request Time Off</a>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
+    <div class="card card-hover">
+      <div class="text-3xl mb-2">🌴</div>
+      <div class="text-2xl font-bold text-primary">12</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400">PTO Days Left</div>
+      <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mt-3">
+        <div class="bg-primary h-2 rounded-full" style="width: 60%"></div>
+      </div>
+    </div>
+    <div class="card card-hover">
+      <div class="text-3xl mb-2">💸</div>
+      <div class="text-2xl font-bold text-primary">$3,200</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400">Last Pay (Net)</div>
+      <a href="/employee/paystubs" class="mt-3 text-accent font-semibold hover:underline">View Paystubs</a>
+    </div>
+    <div class="card card-hover">
+      <div class="text-3xl mb-2">🩺</div>
+      <div class="text-2xl font-bold text-primary">3</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400">Active Benefits</div>
+      <a href="/employee/benefits" class="mt-3 text-accent font-semibold hover:underline">Manage Benefits</a>
+    </div>
+    <div class="card card-hover">
+      <div class="text-3xl mb-2">🎫</div>
+      <div class="text-2xl font-bold text-primary">2</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400">Open Tickets</div>
+      <a href="/employee/help" class="mt-3 text-accent font-semibold hover:underline">View Tickets</a>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex flex-wrap gap-4 justify-center mt-8 animate-fade-in">
+    <a href="/employee/leave" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">🌴</span> Request Time Off
+    </a>
+    <a href="/employee/paystubs" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">💸</span> View Paystubs
+    </a>
+    <a href="/employee/benefits" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">🩺</span> Manage Benefits
+    </a>
+    <a href="/employee/help" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">🎫</span> Get Support
+    </a>
+  </div>
+
+  <!-- Announcements / What's New -->
+  <div class="mt-12 animate-fade-in">
+    <h2 class="text-2xl font-bold text-primary mb-4 flex items-center"><span class="mr-2">📢</span> Announcements</h2>
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 space-y-4">
+      <div class="flex items-start space-x-4">
+        <div class="text-2xl">🚀</div>
+        <div>
+          <div class="font-semibold text-gray-900 dark:text-white">New Feature: Enhanced Dashboard</div>
+          <div class="text-gray-600 dark:text-gray-400 text-sm">Enjoy a new, more visual dashboard experience with summary cards and quick actions!</div>
+        </div>
+      </div>
+      <div class="flex items-start space-x-4">
+        <div class="text-2xl">🎉</div>
+        <div>
+          <div class="font-semibold text-gray-900 dark:text-white">Open Enrollment: Benefits</div>
+          <div class="text-gray-600 dark:text-gray-400 text-sm">Don't forget to review and enroll in your 2025 benefits by July 15th.</div>
+        </div>
+      </div>
+      <div class="flex items-start space-x-4">
+        <div class="text-2xl">💡</div>
+        <div>
+          <div class="font-semibold text-gray-900 dark:text-white">Tip: Use the Help Center</div>
+          <div class="text-gray-600 dark:text-gray-400 text-sm">Submit tickets and get answers to your HR and IT questions in the Help Center.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Access Section -->
+  <div class="mt-8 animate-fade-in">
+    <h2 class="text-xl font-bold text-primary mb-3">Quick Access</h2>
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4">
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+        <a href="https://mail.google.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Gmail</div>
+        </a>
+        <a href="https://teams.microsoft.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Teams</div>
+        </a>
+        <a href="https://chat.openai.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">ChatGPT</div>
+        </a>
+        <a href="https://github.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">GitHub</div>
+        </a>
+        <a href="/employee/knowledge" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Knowledge</div>
+        </a>
+        <a href="/employee/careers/learning" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Courses</div>
+        </a>
+        <a href="https://calendar.google.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Calendar</div>
+        </a>
+        <a href="https://drive.google.com" target="_blank" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Drive</div>
+        </a>
+        <a href="/employee/support" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Support</div>
+        </a>
+        <a href="/employee/time-management" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Time Mgmt</div>
+        </a>
+        <a href="/employee/careers" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Career Dev</div>
+        </a>
+        <a href="/employee/feedback" class="text-center p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">Feedback</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,176 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Employee Details</h1>
+        <p class="text-gray-600 dark:text-gray-400">View and manage employee information</p>
+      </div>
+      <div class="flex space-x-3">
+        <a href="/admin/employees" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Employees
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Employee Information -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Employee Information</h2>
+        
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Full Name</label>
+            <p class="text-gray-900 dark:text-white font-medium">{{ employee.full_name }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Email</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.email }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Phone</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.phone or 'Not provided' }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Department</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.department or 'Not assigned' }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Position</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.position or 'Not assigned' }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Hire Date</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.hire_date or 'Not provided' }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Manager</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.manager or 'Not assigned' }}</p>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Location</label>
+            <p class="text-gray-900 dark:text-white">{{ employee.location or 'Not assigned' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employee Statistics -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Employee Statistics</h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ tickets|length }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Tickets</div>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ timesheets|length }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Timesheets</div>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ leave_requests|length }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Leave Requests</div>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ badges|length }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Badges</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Quick Actions -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+        
+        <div class="space-y-3">
+          <a href="/admin/employees/{{ employee.id }}/edit" class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Edit Employee
+          </a>
+          
+          <a href="/admin/learning/user/{{ employee.id }}" class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            View Learning
+          </a>
+          
+          <button onclick="assignBadge({{ employee.id }})" class="w-full inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+            </svg>
+            Assign Badge
+          </button>
+        </div>
+      </div>
+
+      <!-- Employee Status -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Employee Status</h3>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Employment Type</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-white">{{ employee.employment_type or 'Not specified' }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Salary Band</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-white">{{ employee.salary_band or 'Not specified' }}</span>
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Created</span>
+            <span class="text-sm font-medium text-gray-900 dark:text-white">{{ employee.created_at }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function assignBadge(employeeId) {
+  const badgeName = prompt('Enter badge name:');
+  if (badgeName) {
+    fetch(`/admin/assign-badge/${employeeId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `badge_name=${encodeURIComponent(badgeName)}`
+    }).then(response => {
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert('Error assigning badge');
+      }
+    });
+  }
+}
+</script>
+{% endblock %} 

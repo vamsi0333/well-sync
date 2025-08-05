@@ -1,0 +1,539 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">👥 Groups & Teams</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Collaborate with your team members and build projects together</p>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex flex-wrap gap-4 justify-center">
+    <button onclick="showCreateGroup()" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">➕</span> Create New Group
+    </button>
+    <button onclick="showJoinGroup()" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">🔗</span> Join Group
+    </button>
+    <button onclick="showNewProject()" class="flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <span class="mr-2">📋</span> Start Project
+    </button>
+  </div>
+
+  <!-- Main Content Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="groups-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          👥 My Groups
+        </button>
+        <button id="chat-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          💬 Team Chat
+        </button>
+        <button id="projects-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          📋 Projects
+        </button>
+      </nav>
+    </div>
+
+    <!-- Groups Tab -->
+    <div id="groups-content" class="tab-content active p-6">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for group in groups %}
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 hover:shadow-md transition">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ group.name }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ group.description }}</p>
+            </div>
+            <span class="px-2 py-1 rounded-full text-xs font-medium
+              {% if group.status == 'active' %}bg-green-100 text-green-800
+              {% else %}bg-gray-100 text-gray-800{% endif %}">
+              {{ group.status|title }}
+            </span>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Manager:</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ group.manager }}</p>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Members ({{ group.members|length }}):</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                {% for member in group.members[:3] %}
+                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">{{ member }}</span>
+                {% endfor %}
+                {% if group.members|length > 3 %}
+                <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded">+{{ group.members|length - 3 }} more</span>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="flex space-x-2 pt-3">
+              <button onclick="openGroupChat({{ group.id }})" class="flex-1 bg-primary text-white px-3 py-2 rounded-lg text-sm hover:bg-primary/90 transition">
+                Chat
+              </button>
+              <button onclick="viewGroupProjects({{ group.id }})" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                Projects
+              </button>
+              <button onclick="showAddMember({{ group.id }})" class="flex-1 bg-green-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-600 transition">
+                Add Member
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Chat Tab -->
+    <div id="chat-content" class="tab-content hidden p-6">
+      <div class="flex h-96">
+        <!-- Chat Sidebar -->
+        <div class="w-1/3 border-r border-gray-200 dark:border-gray-700 pr-4">
+          <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Conversations</h3>
+          <div class="space-y-2">
+            {% for group in groups %}
+            <button onclick="loadGroupChat({{ group.id }})" class="w-full text-left p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+              <div class="font-medium text-gray-900 dark:text-gray-100">{{ group.name }}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">{{ group.members|length }} members</div>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="flex-1 pl-4">
+          <div class="h-full flex flex-col">
+            <div class="flex-1 overflow-y-auto space-y-4 mb-4">
+              {% for message in chat_messages %}
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  {{ message.sender[0] }}
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2 mb-1">
+                    <span class="font-medium text-gray-900 dark:text-gray-100">{{ message.sender }}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ message.timestamp }}</span>
+                  </div>
+                  <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                    <p class="text-gray-700 dark:text-gray-300">{{ message.message }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+            <!-- Message Input -->
+            <div class="flex space-x-2">
+              <input type="text" id="messageInput" placeholder="Type your message..." class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+              <label for="fileInput" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition cursor-pointer">
+                📎
+              </label>
+              <input type="file" id="fileInput" class="hidden" onchange="uploadFile()">
+              <button onclick="sendMessage()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects Tab -->
+    <div id="projects-content" class="tab-content hidden p-6">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in projects %}
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ project.name }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ project.description }}</p>
+            </div>
+            <span class="px-2 py-1 rounded-full text-xs font-medium
+              {% if project.status == 'completed' %}bg-green-100 text-green-800
+              {% elif project.status == 'in_progress' %}bg-blue-100 text-blue-800
+              {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+              {{ project.status|replace('_', ' ')|title }}
+            </span>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-600 dark:text-gray-400">Progress</span>
+                <span class="text-gray-900 dark:text-gray-100">{{ project.progress }}%</span>
+              </div>
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div class="bg-primary h-2 rounded-full" style="width: {{ project.progress }}%"></div>
+              </div>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Due Date:</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ project.due_date }}</p>
+            </div>
+            
+            <div>
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Assigned to:</p>
+              <div class="flex flex-wrap gap-1 mt-1">
+                {% for person in project.assigned_to %}
+                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">{{ person }}</span>
+                {% endfor %}
+              </div>
+            </div>
+            
+            <div class="flex space-x-2 pt-3">
+              <button class="flex-1 bg-primary text-white px-3 py-2 rounded-lg text-sm hover:bg-primary/90 transition">
+                View Details
+              </button>
+              <button class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Group Modal -->
+<div id="createGroupModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-md">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Create New Group</h3>
+      <form class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group Name</label>
+          <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+          <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option>Project Team</option>
+            <option>Department</option>
+            <option>Research</option>
+            <option>Social</option>
+          </select>
+        </div>
+        <div class="flex space-x-3 pt-4">
+          <button type="button" onclick="hideCreateGroup()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+            Create Group
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+
+  // Modal functions
+  function showCreateGroup() {
+    document.getElementById('createGroupModal').classList.remove('hidden');
+  }
+
+  function hideCreateGroup() {
+    document.getElementById('createGroupModal').classList.add('hidden');
+  }
+
+  function showJoinGroup() {
+    // Create join group modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50';
+    modal.innerHTML = `
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-md">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Join Group</h3>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group Code</label>
+              <input type="text" placeholder="Enter group invitation code" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            </div>
+            <div class="flex space-x-3 pt-4">
+              <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                Cancel
+              </button>
+              <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Join Group
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.remove();
+      }
+    });
+  }
+
+  function showNewProject() {
+    // Create new project modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50';
+    modal.innerHTML = `
+      <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-md">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Start New Project</h3>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Name</label>
+              <input type="text" placeholder="Enter project name" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+              <textarea rows="3" placeholder="Describe your project" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Group</label>
+              <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+                <option>Select a group</option>
+                <option>Development Team</option>
+                <option>Marketing Team</option>
+                <option>Research Team</option>
+              </select>
+            </div>
+            <div class="flex space-x-3 pt-4">
+              <button type="button" onclick="this.closest('.fixed').remove()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                Cancel
+              </button>
+              <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                Create Project
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.remove();
+      }
+    });
+  }
+
+  function openGroupChat(groupId) {
+    // Switch to chat tab and load group chat
+    document.getElementById('chat-tab').click();
+    loadGroupChat(groupId);
+  }
+
+  function viewGroupProjects(groupId) {
+    // Switch to projects tab and filter by group
+    document.getElementById('projects-tab').click();
+    console.log('Viewing projects for group:', groupId);
+  }
+
+  function loadGroupChat(groupId) {
+    console.log('Loading chat for group:', groupId);
+    // Here you would load the actual chat messages for the group
+    // For now, just show a placeholder
+    const chatArea = document.querySelector('#chat-content .flex-1');
+    if (chatArea) {
+      chatArea.innerHTML = `
+        <div class="flex flex-col h-full">
+          <div class="border-b border-gray-200 dark:border-gray-700 p-4">
+            <h3 class="font-semibold text-gray-900 dark:text-gray-100">Group Chat</h3>
+          </div>
+          <div class="flex-1 p-4 overflow-y-auto" id="chatMessages">
+            <div class="space-y-4">
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">J</div>
+                <div class="flex-1">
+                  <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                    <p class="text-sm text-gray-900 dark:text-gray-100">Hello team! How's the project going?</p>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">John Doe • 2 minutes ago</p>
+                </div>
+              </div>
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm">S</div>
+                <div class="flex-1">
+                  <div class="bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
+                    <p class="text-sm text-gray-900 dark:text-gray-100">Great progress! We're on track for the deadline.</p>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">Sarah Smith • 1 minute ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+            <div class="flex space-x-2">
+              <input type="text" id="dynamicMessageInput" placeholder="Type your message..." class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+              <button onclick="sendMessage(${groupId})" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">Send</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function sendMessage(groupId = null) {
+    const messageInput = document.getElementById('messageInput') || document.getElementById('dynamicMessageInput');
+    const message = messageInput.value.trim();
+    
+    if (!message) {
+      alert('Please enter a message');
+      return;
+    }
+    
+    // Use the groupId parameter or get it from the current context
+    const currentGroupId = groupId || 1; // Default to group 1 if not specified
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('message', message);
+    
+    // Send message to server
+    fetch(`/employee/groups/${currentGroupId}/send-message`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Add message to chat
+        addMessageToChat(data.message);
+        // Clear input
+        messageInput.value = '';
+      } else {
+        alert('Error sending message: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error sending message');
+    });
+  }
+
+  function addMessageToChat(messageData) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex items-start space-x-3';
+      messageDiv.innerHTML = `
+        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm">${messageData.sender[0]}</div>
+        <div class="flex-1">
+          <div class="bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
+            <p class="text-sm text-gray-900 dark:text-gray-100">${messageData.message}</p>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">${messageData.sender} • ${messageData.timestamp}</p>
+        </div>
+      `;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+
+  function showAddMember(groupId) {
+    const memberName = prompt('Enter the name of the member to add:');
+    if (memberName && memberName.trim()) {
+      addMemberToGroup(groupId, memberName.trim());
+    }
+  }
+
+  function addMemberToGroup(groupId, memberName) {
+    const formData = new FormData();
+    formData.append('member_name', memberName);
+    
+    fetch(`/employee/groups/${groupId}/add-member`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        location.reload(); // Refresh to show new member
+      } else {
+        alert('Error adding member: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error adding member');
+    });
+  }
+
+  function uploadFile() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+      alert('Please select a file');
+      return;
+    }
+    
+    const currentGroupId = 1; // Default to group 1, you can make this dynamic
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    fetch(`/employee/groups/${currentGroupId}/upload-file`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        addMessageToChat(data.message);
+        fileInput.value = ''; // Clear file input
+      } else {
+        alert('Error uploading file: ' + data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error uploading file');
+    });
+  }
+
+  // Allow Enter key to send message
+  document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      const messageInput = document.getElementById('messageInput') || document.getElementById('dynamicMessageInput');
+      if (messageInput && document.activeElement === messageInput) {
+        sendMessage();
+      }
+    }
+  });
+</script>
+{% endblock %} 

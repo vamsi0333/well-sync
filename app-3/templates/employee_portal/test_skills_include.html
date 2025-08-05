@@ -1,0 +1,17 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1>Test Skills Assessment Include</h1>
+  
+  <div class="bg-blue-100 p-4 mb-4">
+    <h2>Testing Skills Test Content Include</h2>
+    <p>If you can see this, the template is working.</p>
+  </div>
+  
+  <div class="bg-green-100 p-4">
+    <h3>Including Skills Test Content:</h3>
+    {% include 'employee_portal/skills_test_content.html' %}
+  </div>
+</div>
+{% endblock %} 
