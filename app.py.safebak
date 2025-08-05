@@ -1,0 +1,1110 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from werkzeug.utils import secure_filename
+import io
+from flask import send_file, abort
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey'
+
+# Configure file upload
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'doc', 'docx'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Dummy data stores
+mock_user = {"email": "user@example.com", "password": "password123"}
+mock_admin = {"email": "admin@example.com", "password": "admin123"}
+
+# --- BEGIN EMPLOYEE PORTAL DATA & HELPERS (merged) ---
+# In-memory store for time off requests
+if 'timeoff_requests' not in globals():
+    timeoff_requests = []
+# In-memory paystubs (simulate for demo)
+if 'paystubs' not in globals():
+    paystubs = [
+        {
+            'user': 'employee1@example.com',
+            'date': '2025-06-30',
+            'gross': 4000,
+            'net': 3200,
+            'id': 1,
+            'filename': 'paystub_june2025.pdf'
+        },
+        {
+            'user': 'employee1@example.com',
+            'date': '2025-05-31',
+            'gross': 4000,
+            'net': 3200,
+            'id': 2,
+            'filename': 'paystub_may2025.pdf'
+        }
+    ]
+# In-memory benefits (simulate for demo)
+if 'benefits' not in globals():
+    benefits = [
+        {
+            'user': 'employee1@example.com',
+            'type': 'Health Insurance',
+            'status': 'enrolled',
+            'deadline': '2025-07-15',
+            'id': 1,
+            'details': 'Comprehensive health plan with $500 deductible.'
+        },
+        {
+            'user': 'employee1@example.com',
+            'type': 'Dental Insurance',
+            'status': 'enrolled',
+            'deadline': '2025-07-15',
+            'id': 2,
+            'details': 'Covers preventive and basic dental care.'
+        },
+        {
+            'user': 'employee1@example.com',
+            'type': 'Vision Insurance',
+            'status': 'not enrolled',
+            'deadline': '2025-07-15',
+            'id': 3,
+            'details': 'Annual eye exam and glasses/contacts coverage.'
+        },
+        {
+            'user': 'employee1@example.com',
+            'type': 'Retirement Plan',
+            'status': 'enrolled',
+            'deadline': '2025-12-31',
+            'id': 4,
+            'details': '401(k) with company match.'
+        }
+    ]
+# In-memory user profiles (simulate for demo)
+if 'user_profiles' not in globals():
+    user_profiles = {
+        'employee1@example.com': {
+            'name': 'Employee One',
+            'email': 'employee1@example.com',
+            'department': 'Engineering',
+            'phone': '555-1234',
+            'address': '123 Main St, City',
+            'emergency_name': 'Jane Doe',
+            'emergency_phone': '555-5678',
+            'emergency_relation': 'Spouse'
+        }
+    }
+# In-memory demo data for careers features
+if 'job_listings' not in globals():
+    job_listings = [
+        {'id': 1, 'title': 'Software Engineer', 'location': 'Remote', 'type': 'Full-time', 'salary': '120000', 'industry': 'Tech', 'desc': 'Build amazing products.', 'remote': True},
+        {'id': 2, 'title': 'HR Specialist', 'location': 'NYC', 'type': 'Full-time', 'salary': '80000', 'industry': 'HR', 'desc': 'Support our growing team.', 'remote': False},
+        {'id': 3, 'title': 'Data Analyst Intern', 'location': 'Remote', 'type': 'Internship', 'salary': '25000', 'industry': 'Analytics', 'desc': 'Analyze data for insights.', 'remote': True}
+    ]
+    applications = []
+    saved_jobs = []
+    mentorships = [
+        {'id': 1, 'mentor': 'Jane Doe', 'field': 'Engineering', 'bio': '10 years experience in software.'},
+        {'id': 2, 'mentor': 'John Smith', 'field': 'HR', 'bio': 'HR leader and coach.'}
+    ]
+    upskilling = [
+        {'id': 1, 'title': 'Python Certification', 'provider': 'Coursera', 'desc': 'Learn Python for data science.'},
+        {'id': 2, 'title': 'Project Management', 'provider': 'edX', 'desc': 'Master project management skills.'}
+    ]
+    career_goals = [{'id': 1, 'goal': 'Become a Senior Engineer', 'progress': 60}, {'id': 2, 'goal': 'Get AWS Certification', 'progress': 30}]
+    badges = [{'id': 1, 'name': 'Python Certified', 'desc': 'Completed Python course', 'icon': '🐍'}, {'id': 2, 'name': 'Project Manager', 'desc': 'Completed PM course', 'icon': '📈'}]
+    course_progress = [{'id': 1, 'title': 'Python Certification', 'progress': 80}, {'id': 2, 'title': 'Project Management', 'progress': 40}]
+    resources = [
+        {'id': 1, 'title': 'How to Ace Technical Interviews', 'url': 'https://www.example.com/interview', 'desc': 'Tips and tricks for technical interviews.'},
+        {'id': 2, 'title': 'Coursera: Python for Everybody', 'url': 'https://www.coursera.org/learn/python', 'desc': 'Free Python course.'},
+        {'id': 3, 'title': 'edX: Project Management', 'url': 'https://www.edx.org/course/project-management', 'desc': 'Project management certification.'}
+    ]
+# In-memory stores for admin management
+if 'leave_requests' not in globals():
+    leave_requests = []
+if 'timesheets' not in globals():
+    timesheets = []
+if 'feedbacks' not in globals():
+    feedbacks = []
+# --- END EMPLOYEE PORTAL DATA & HELPERS (merged) ---
+
+tickets = [
+    {"id": 1, "title": "Printer not connecting", "priority": "high", "status": "open", "date": "2025-07-18", "description": "Printer shows offline status", "user_email": "user@example.com", "attachments": []},
+    {"id": 2, "title": "VPN Login Failure", "priority": "medium", "status": "pending", "date": "2025-07-19", "description": "Cannot connect to VPN", "user_email": "user@example.com", "attachments": []}
+]
+
+comments = {
+    1: [{"author": "Alice", "message": "I tried rebooting it.", "timestamp": "2025-07-18 09:45", "author_type": "user"},
+        {"author": "IT Staff", "message": "We're investigating this now.", "timestamp": "2025-07-18 10:15", "author_type": "admin"}],
+    2: []
+}
+
+requests_data = [
+    {"id": 1, "type": "hardware", "subject": "Need a new mouse", "description": "Mouse disconnecting.",
+     "status": "pending", "submitted_by": "user@example.com", "hr_comment": "We'll issue one next week.", "attachments": []}
+]
+
+notifications = []
+
+# In-memory device tracking (simulate for demo)
+devices = [
+    {
+        'id': 1,
+        'name': 'Dell XPS 13',
+        'type': 'Laptop',
+        'assigned_to': 'employee1@example.com',
+        'status': 'lent',
+        'lent_date': '2025-07-01',
+        'return_date': '',
+        'notes': 'For remote work'
+    },
+    {
+        'id': 2,
+        'name': 'iPhone 13',
+        'type': 'Phone',
+        'assigned_to': '',
+        'status': 'available',
+        'lent_date': '',
+        'return_date': '',
+        'notes': ''
+    }
+]
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def send_email_notification(to_email, subject, message):
+    """Send email notification (placeholder for production)"""
+    # In production, configure SMTP settings
+    print(f"Email to {to_email}: {subject} - {message}")
+    return True
+
+def add_notification(user_email, message, notification_type="info"):
+    """Add notification to the system"""
+    notification = {
+        "id": len(notifications) + 1,
+        "user_email": user_email,
+        "message": message,
+        "type": notification_type,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "read": False
+    }
+    notifications.append(notification)
+
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        
+        # Check admin login
+        if email == mock_admin["email"] and password == mock_admin["password"]:
+            session["user"] = email
+            session["role"] = "admin"
+            flash("Logged in successfully as Admin!", "success")
+            return redirect(url_for("admin_dashboard"))
+        
+        # Check regular user login
+        elif email == mock_user["email"] and password == mock_user["password"]:
+            session["user"] = email
+            session["role"] = "user"
+            flash("Logged in successfully!", "success")
+            return redirect(url_for("dashboard"))
+        
+        flash("Invalid credentials", "error")
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    session.pop("role", None)
+    flash("Logged out.", "info")
+    return redirect(url_for("login"))
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        if request.form["password"] != request.form["confirm"]:
+            flash("Passwords do not match.", "error")
+        else:
+            flash("Registered successfully!", "success")
+            return redirect(url_for("login"))
+    return render_template("register.html")
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        flash(f"Reset link sent to {request.form['email']}", "info")
+        return redirect(url_for("login"))
+    return render_template("forgot_password.html")
+
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if session.get("role") == "admin":
+        return redirect(url_for("admin_dashboard"))
+    
+    dashboard_data = {
+        "open_tickets": len([t for t in tickets if t["status"] == "open" and t["user_email"] == session["user"]]),
+        "resolved_tickets": len([t for t in tickets if t["status"] == "resolved" and t["user_email"] == session["user"]]),
+        "avg_resolution_time": "2.1 hrs",
+        "system_status": [
+            {"service": "Email Server", "status": "🟢 Operational"},
+            {"service": "VPN Gateway", "status": "🟢 Operational"},
+            {"service": "Printer Network", "status": "🟡 Degraded"},
+            {"service": "Remote Desktop", "status": "🔴 Down"},
+        ]
+    }
+    return render_template("dashboard.html", **dashboard_data)
+
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    admin_data = {
+        "total_tickets": len(tickets),
+        "open_tickets": len([t for t in tickets if t["status"] == "open"]),
+        "resolved_tickets": len([t for t in tickets if t["status"] == "resolved"]),
+        "total_requests": len(requests_data),
+        "pending_requests": len([r for r in requests_data if r["status"] == "pending"]),
+        "total_users": len(user_profiles),
+        "recent_tickets": tickets[-5:] if len(tickets) > 5 else tickets,
+        "recent_requests": requests_data[-5:] if len(requests_data) > 5 else requests_data
+    }
+    return render_template("admin_dashboard.html", **admin_data)
+
+@app.route("/admin/tickets")
+def admin_tickets():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    # Get filter parameters
+    status_filter = request.args.get("status", "")
+    priority_filter = request.args.get("priority", "")
+    search_query = request.args.get("search", "")
+    
+    filtered_tickets = tickets
+    
+    if status_filter:
+        filtered_tickets = [t for t in filtered_tickets if t["status"] == status_filter]
+    
+    if priority_filter:
+        filtered_tickets = [t for t in filtered_tickets if t["priority"] == priority_filter]
+    
+    if search_query:
+        filtered_tickets = [t for t in filtered_tickets if search_query.lower() in t["title"].lower() or search_query.lower() in t.get("description", "").lower()]
+    
+    return render_template("admin_tickets.html", tickets=filtered_tickets)
+
+@app.route("/admin/requests")
+def admin_requests():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    # Get filter parameters
+    status_filter = request.args.get("status", "")
+    type_filter = request.args.get("type", "")
+    search_query = request.args.get("search", "")
+    
+    filtered_requests = requests_data
+    
+    if status_filter:
+        filtered_requests = [r for r in filtered_requests if r["status"] == status_filter]
+    
+    if type_filter:
+        filtered_requests = [r for r in filtered_requests if r["type"] == type_filter]
+    
+    if search_query:
+        filtered_requests = [r for r in filtered_requests if search_query.lower() in r["subject"].lower() or search_query.lower() in r.get("description", "").lower()]
+    
+    return render_template("admin_requests.html", requests=filtered_requests)
+
+@app.route("/admin/update-ticket-status/<int:ticket_id>", methods=["POST"])
+def update_ticket_status(ticket_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    new_status = request.form["status"]
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    
+    if ticket:
+        old_status = ticket["status"]
+        ticket["status"] = new_status
+        
+        # Add notification
+        add_notification(ticket["user_email"], f"Your ticket '{ticket['title']}' status changed from {old_status} to {new_status}")
+        
+        # Send email notification
+        send_email_notification(ticket["user_email"], "Ticket Status Updated", 
+                              f"Your ticket '{ticket['title']}' status has been updated to {new_status}")
+        
+        flash(f"Ticket status updated to {new_status}", "success")
+    
+    return redirect(url_for("admin_tickets"))
+
+@app.route("/admin/update-request-status/<int:request_id>", methods=["POST"])
+def update_request_status(request_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    new_status = request.form["status"]
+    request_item = next((r for r in requests_data if r["id"] == request_id), None)
+    
+    if request_item:
+        old_status = request_item["status"]
+        request_item["status"] = new_status
+        
+        # Add notification
+        add_notification(request_item["submitted_by"], f"Your request '{request_item['subject']}' status changed from {old_status} to {new_status}")
+        
+        # Send email notification
+        send_email_notification(request_item["submitted_by"], "Request Status Updated", 
+                              f"Your request '{request_item['subject']}' status has been updated to {new_status}")
+        
+        flash(f"Request status updated to {new_status}", "success")
+    
+    return redirect(url_for("admin_requests"))
+
+@app.route("/admin/add-hr-comment/<int:request_id>", methods=["POST"])
+def add_hr_comment(request_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    comment = request.form["hr_comment"]
+    request_item = next((r for r in requests_data if r["id"] == request_id), None)
+    
+    if request_item:
+        request_item["hr_comment"] = comment
+        
+        # Add notification
+        add_notification(request_item["submitted_by"], f"HR comment added to your request '{request_item['subject']}'")
+        
+        # Send email notification
+        send_email_notification(request_item["submitted_by"], "HR Comment Added", 
+                              f"An HR comment has been added to your request '{request_item['subject']}': {comment}")
+        
+        flash("HR comment added successfully", "success")
+    
+    return redirect(url_for("admin_requests"))
+
+@app.route("/tickets")
+def view_tickets():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if session.get("role") == "admin":
+        return redirect(url_for("admin_tickets"))
+
+    user_tickets = [t for t in tickets if t["user_email"] == session["user"]]
+    return render_template("tickets.html", tickets=user_tickets)
+
+@app.route("/submit-ticket", methods=["GET", "POST"])
+def submit_ticket():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        new_ticket = {
+            "id": len(tickets) + 1,
+            "title": request.form["title"],
+            "priority": request.form["priority"],
+            "status": "open",
+            "date": request.form["date"],
+            "description": request.form.get("description", ""),
+            "user_email": session["user"],
+            "attachments": []
+        }
+        
+        # Handle file uploads
+        if 'attachments' in request.files:
+            files = request.files.getlist('attachments')
+            for file in files:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    new_ticket["attachments"].append(filename)
+        
+        tickets.append(new_ticket)
+        
+        # Add notification for admin
+        add_notification("admin@example.com", f"New ticket submitted: {new_ticket['title']}", "warning")
+        
+        flash("Ticket submitted!", "success")
+        return redirect(url_for("view_tickets"))
+    
+    return render_template("submit_ticket.html")
+
+@app.route("/ticket/<int:ticket_id>")
+def ticket_detail(ticket_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if not ticket:
+        flash("Not found.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    # Check if user can view this ticket
+    if session.get("role") != "admin" and ticket["user_email"] != session["user"]:
+        flash("Access denied.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    return render_template("ticket_details.html", ticket=ticket, comments=comments.get(ticket_id, []))
+
+@app.route("/ticket/<int:ticket_id>/comment", methods=["POST"])
+def add_comment(ticket_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if not ticket:
+        flash("Ticket not found.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    # Check if user can comment on this ticket
+    if session.get("role") != "admin" and ticket["user_email"] != session["user"]:
+        flash("Access denied.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    comment_data = {
+        "author": session["user"],
+        "message": request.form["message"],
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "author_type": session.get("role", "user")
+    }
+    
+    comments.setdefault(ticket_id, []).append(comment_data)
+    
+    # Add notification for other party
+    if session.get("role") == "admin":
+        add_notification(ticket["user_email"], f"Admin commented on your ticket: {ticket['title']}")
+    else:
+        add_notification("admin@example.com", f"User commented on ticket: {ticket['title']}")
+    
+    flash("Comment added.", "success")
+    return redirect(url_for("ticket_detail", ticket_id=ticket_id))
+
+@app.route("/submit-request", methods=["GET", "POST"])
+def submit_request():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        new_request = {
+            "id": len(requests_data) + 1,
+            "type": request.form["type"],
+            "subject": request.form["subject"],
+            "description": request.form["description"],
+            "submitted_by": session["user"],
+            "status": "pending",
+            "attachments": []
+        }
+        
+        # Handle file uploads
+        if 'attachments' in request.files:
+            files = request.files.getlist('attachments')
+            for file in files:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    new_request["attachments"].append(filename)
+        
+        requests_data.append(new_request)
+        
+        # Add notification for admin
+        add_notification("admin@example.com", f"New request submitted: {new_request['subject']}", "warning")
+        
+        flash("Request submitted.", "success")
+        return redirect(url_for("dashboard"))
+    
+    return render_template("submit_request.html", prefill_type=request.args.get("type", ""))
+
+@app.route("/request-history")
+def request_history():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if session.get("role") == "admin":
+        return redirect(url_for("admin_requests"))
+    
+    user_requests = [r for r in requests_data if r["submitted_by"] == session["user"]]
+    return render_template("request_history.html", requests=user_requests)
+
+@app.route("/cancel-request/<int:req_id>", methods=["POST"])
+def cancel_request(req_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    for r in requests_data:
+        if r["id"] == req_id and (r["submitted_by"] == session["user"] or session.get("role") == "admin"):
+            r["status"] = "cancelled"
+            break
+    
+    flash("Request cancelled.", "info")
+    return redirect(url_for("request_history"))
+
+@app.route("/notifications")
+def view_notifications():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    user_notifications = [n for n in notifications if n["user_email"] == session["user"]]
+    return render_template("notifications.html", notifications=user_notifications)
+
+@app.route("/notifications/mark-read/<int:notification_id>", methods=["POST"])
+def mark_notification_read(notification_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    notification = next((n for n in notifications if n["id"] == notification_id and n["user_email"] == session["user"]), None)
+    if notification:
+        notification["read"] = True
+    
+    return redirect(url_for("view_notifications"))
+
+@app.route("/system-status")
+def system_status():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("system_status.html", systems=[
+        {"name": "Email Server", "description": "Handles mail.", "status": "Operational"},
+        {"name": "VPN Gateway", "description": "Remote access", "status": "Operational"},
+        {"name": "Printer Network", "description": "Print queue", "status": "Degraded"},
+        {"name": "Remote Desktop", "description": "Virtual access", "status": "Down"},
+    ])
+
+@app.route("/faqs")
+def faqs():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("faqs.html")
+
+@app.route("/resources")
+def resources():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("resources.html", resources=[
+        {"title": "VPN Client", "description": "VPN install", "link": "#"},
+        {"title": "Email Guide", "description": "Setup email", "link": "#"}
+    ])
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    user = user_profiles.get(session["user"])
+    if request.method == "POST":
+        user["name"] = request.form["name"]
+        user["department"] = request.form["department"]
+        flash("Profile updated", "success")
+    return render_template("profile.html", user=user)
+
+@app.route("/catalog")
+def catalog():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("catalog.html")
+
+@app.route("/api/ai-assistant", methods=["POST"])
+def ai_assistant():
+    q = request.get_json().get("question", "").lower()
+    responses = {
+        "reset vpn": "Try disconnecting/reconnecting.",
+        "email not working": "Try logging out/in.",
+        "forgot password": "Click 'Forgot Password'.",
+        "printer not working": "Try rebooting the printer."
+    }
+    for k in responses:
+        if k in q:
+            return jsonify({"answer": responses[k]})
+    return jsonify({"answer": "Not sure. Please submit a ticket."})
+
+@app.route('/devices', methods=['GET', 'POST'])
+def device_list():
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        new_device = {
+            'id': len(devices) + 1,
+            'name': request.form['name'],
+            'type': request.form['type'],
+            'assigned_to': '',
+            'status': 'available',
+            'lent_date': '',
+            'return_date': '',
+            'notes': request.form.get('notes', '')
+        }
+        devices.append(new_device)
+        flash('Device added!', 'success')
+        return redirect(url_for('device_list'))
+    return render_template('devices.html', devices=devices)
+
+@app.route('/devices/lend/<int:device_id>', methods=['POST'])
+def lend_device(device_id):
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    device = next((d for d in devices if d['id'] == device_id), None)
+    if device and device['status'] == 'available':
+        device['assigned_to'] = request.form['assigned_to']
+        device['status'] = 'lent'
+        device['lent_date'] = request.form['lent_date']
+        device['return_date'] = ''
+        device['notes'] = request.form.get('notes', device['notes'])
+        flash('Device lent out!', 'success')
+    else:
+        flash('Device not available.', 'error')
+    return redirect(url_for('device_list'))
+
+@app.route('/devices/return/<int:device_id>', methods=['POST'])
+def return_device(device_id):
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    device = next((d for d in devices if d['id'] == device_id), None)
+    if device and device['status'] == 'lent':
+        device['status'] = 'available'
+        device['return_date'] = request.form['return_date']
+        device['assigned_to'] = ''
+        flash('Device marked as returned!', 'success')
+    else:
+        flash('Device not currently lent.', 'error')
+    return redirect(url_for('device_list'))
+
+# --- BEGIN EMPLOYEE PORTAL ROUTES (merged) ---
+# Only add if not already present
+
+# Time Off
+if not any(r.rule == '/timeoff' for r in app.url_map.iter_rules()):
+    @app.route('/timeoff', methods=['GET', 'POST'])
+    def timeoff():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        if request.method == 'POST':
+            req = {
+                'id': len(timeoff_requests) + 1,
+                'user': user,
+                'type': request.form['type'],
+                'start': request.form['start'],
+                'end': request.form['end'],
+                'reason': request.form['reason'],
+                'status': 'pending',
+                'submitted': datetime.now().strftime('%Y-%m-%d'),
+            }
+            timeoff_requests.append(req)
+            flash('Time off request submitted!', 'success')
+            return redirect(url_for('timeoff'))
+        user_requests = [r for r in timeoff_requests if r['user'] == user]
+        return render_template('timeoff.html', requests=user_requests)
+
+    @app.route('/timeoff/cancel/<int:req_id>', methods=['POST'])
+    def cancel_timeoff(req_id):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        for r in timeoff_requests:
+            if r['id'] == req_id and r['user'] == user and r['status'] == 'pending':
+                r['status'] = 'cancelled'
+                flash('Request cancelled.', 'info')
+                break
+        return redirect(url_for('timeoff'))
+
+# Paystubs
+if not any(r.rule == '/paystubs' for r in app.url_map.iter_rules()):
+    @app.route('/paystubs')
+    def paystubs_page():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        user_paystubs = [p for p in paystubs if p['user'] == user]
+        return render_template('paystubs.html', paystubs=user_paystubs)
+
+    @app.route('/paystubs/download/<int:stub_id>')
+    def download_paystub(stub_id):
+        stub = next((p for p in paystubs if p['id'] == stub_id), None)
+        if not stub or stub['user'] != session.get('user'):
+            flash('Not authorized or not found.', 'error')
+            return redirect(url_for('paystubs_page'))
+        fake_pdf = io.BytesIO(b'%PDF-1.4\n%Fake PDF for demo\n')
+        return send_file(fake_pdf, as_attachment=True, download_name=stub['filename'], mimetype='application/pdf')
+
+# Benefits
+if not any(r.rule == '/benefits' for r in app.url_map.iter_rules()):
+    @app.route('/benefits', methods=['GET', 'POST'])
+    def benefits_page():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        user_benefits = [b for b in benefits if b['user'] == user]
+        if request.method == 'POST':
+            action = request.form.get('action')
+            benefit_id = int(request.form.get('benefit_id'))
+            for b in benefits:
+                if b['id'] == benefit_id and b['user'] == user:
+                    if action == 'enroll':
+                        b['status'] = 'enrolled'
+                        flash(f'Enrolled in {b["type"]}!', 'success')
+                    elif action == 'edit':
+                        flash(f'Edit for {b["type"]} saved!', 'success')
+                    elif action == 'learn':
+                        flash(f'More info: {b["details"]}', 'info')
+        return render_template('benefits.html', benefits=user_benefits)
+
+# Help Center (HR/IT tickets)
+if not any(r.rule == '/help' for r in app.url_map.iter_rules()):
+    @app.route('/help', methods=['GET', 'POST'])
+    def help_center():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        user_tickets = [t for t in tickets if t.get('user', t.get('user_email')) == user]
+        if request.method == 'POST':
+            new_ticket = {
+                'id': len(tickets) + 1,
+                'user': user,
+                'subject': request.form['subject'],
+                'type': request.form['type'],
+                'urgency': request.form['urgency'],
+                'description': request.form['description'],
+                'status': 'open',
+                'date': datetime.now().strftime('%Y-%m-%d'),
+                'comments': []
+            }
+            tickets.append(new_ticket)
+            flash('Ticket submitted!', 'success')
+            return redirect(url_for('help_center'))
+        return render_template('help.html', tickets=user_tickets)
+
+# Careers
+if not any(r.rule == '/careers' for r in app.url_map.iter_rules()):
+    @app.route('/careers', methods=['GET', 'POST'])
+    def careers():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user_skills = ['python', 'data', 'teamwork']
+        recommended = [j for j in job_listings if any(s in j['desc'].lower() for s in user_skills)]
+        if request.method == 'POST':
+            if 'save_job' in request.form:
+                job_id = int(request.form['save_job'])
+                if job_id not in saved_jobs:
+                    saved_jobs.append(job_id)
+                    flash('Job saved!', 'success')
+            if 'apply_job' in request.form:
+                job_id = int(request.form['apply_job'])
+                applications.append({'user': session['user'], 'job_id': job_id, 'status': 'applied'})
+                flash('Application submitted!', 'success')
+        return render_template('careers.html', jobs=job_listings, recommended=recommended, saved_jobs=saved_jobs)
+
+    @app.route('/careers/applications')
+    def careers_applications():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user_apps = [a for a in applications if a['user'] == session['user']]
+        return render_template('careers_applications.html', applications=user_apps, jobs=job_listings)
+
+    @app.route('/careers/resume', methods=['GET', 'POST'])
+    def careers_resume():
+        feedback = None
+        optimized_resume = None
+        if request.method == 'POST':
+            feedback = 'Your resume could use more quantifiable achievements.'
+            optimized_resume = 'Optimized Resume: ... (AI rewrite here)'
+        return render_template('careers_resume.html', feedback=feedback, optimized_resume=optimized_resume)
+
+    @app.route('/careers/upskilling')
+    def careers_upskilling():
+        return render_template('careers_upskilling.html', upskilling=upskilling)
+
+    @app.route('/careers/mentorship', methods=['GET', 'POST'])
+    def careers_mentorship():
+        if request.method == 'POST':
+            flash('Mentorship request sent!', 'success')
+        return render_template('careers_mentorship.html', mentorships=mentorships)
+
+    @app.route('/careers/saved')
+    def careers_saved():
+        saved = [j for j in job_listings if j['id'] in saved_jobs]
+        return render_template('careers_saved.html', jobs=saved)
+
+    @app.route('/careers/goals', methods=['GET', 'POST'])
+    def careers_goals():
+        if request.method == 'POST':
+            new_goal = request.form.get('goal')
+            if new_goal:
+                career_goals.append({'id': len(career_goals)+1, 'goal': new_goal, 'progress': 0})
+                flash('Goal added!', 'success')
+        return render_template('careers_goals.html', goals=career_goals)
+
+    @app.route('/careers/badges')
+    def careers_badges():
+        return render_template('careers_badges.html', badges=badges)
+
+    @app.route('/careers/progress')
+    def careers_progress():
+        return render_template('careers_progress.html', courses=course_progress)
+
+    @app.route('/careers/resources')
+    def careers_resources():
+        return render_template('careers_resources.html', resources=resources)
+
+# Leave, Timesheet, Feedback, Complimentary
+if not any(r.rule == '/leave' for r in app.url_map.iter_rules()):
+    @app.route('/leave', methods=['GET', 'POST'])
+    def leave_form():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        if request.method == 'POST':
+            req = {
+                'id': len(leave_requests) + 1,
+                'user': user,
+                'type': request.form.get('type', ''),
+                'start': request.form.get('start', ''),
+                'end': request.form.get('end', ''),
+                'reason': request.form.get('reason', ''),
+                'status': 'pending',
+                'submitted': datetime.now().strftime('%Y-%m-%d'),
+            }
+            leave_requests.append(req)
+            flash('Leave form submitted!', 'success')
+            return redirect(url_for('leave_form'))
+        user_leaves = [r for r in leave_requests if r['user'] == user]
+        return render_template('leave.html', leaves=user_leaves)
+
+    @app.route('/timesheet', methods=['GET', 'POST'])
+    def timesheet():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        user = session['user']
+        if request.method == 'POST':
+            ts = {
+                'id': len(timesheets) + 1,
+                'user': user,
+                'week_start': request.form.get('week_start', ''),
+                'hours': request.form.get('hours', ''),
+                'notes': request.form.get('notes', ''),
+                'status': 'pending',
+                'submitted': datetime.now().strftime('%Y-%m-%d'),
+            }
+            timesheets.append(ts)
+            flash('Timesheet submitted!', 'success')
+            return redirect(url_for('timesheet'))
+        user_timesheets = [t for t in timesheets if t['user'] == user]
+        return render_template('timesheet.html', timesheets=user_timesheets)
+
+    @app.route('/feedback', methods=['GET', 'POST'])
+    def anon_feedback():
+        if request.method == 'POST':
+            fb = {
+                'id': len(feedbacks) + 1,
+                'message': request.form.get('feedback', ''),
+                'date': datetime.now().strftime('%Y-%m-%d'),
+                'read': False
+            }
+            feedbacks.append(fb)
+            flash('Thank you for your anonymous feedback!', 'success')
+            return redirect(url_for('anon_feedback'))
+        return render_template('feedback.html')
+
+    @app.route('/complimentary', methods=['GET', 'POST'])
+    def complimentary():
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        if request.method == 'POST':
+            flash('Complimentary form submitted!', 'success')
+            return redirect(url_for('complimentary'))
+        return render_template('complimentary.html')
+
+# --- END EMPLOYEE PORTAL ROUTES (merged) ---
+
+# --- BEGIN EMPLOYEE PORTAL ADMIN ROUTES (merged) ---
+# Only add if not already present
+
+def admin_required():
+    if session.get('role') != 'admin':
+        abort(403)
+
+# Admin Timeoff
+if not any(r.rule == '/admin/timeoff' for r in app.url_map.iter_rules()):
+    @app.route('/admin/timeoff')
+    def admin_timeoff():
+        admin_required()
+        return render_template('admin_timeoff.html', requests=timeoff_requests)
+
+# Admin Paystubs
+if not any(r.rule == '/admin/paystubs' for r in app.url_map.iter_rules()):
+    @app.route('/admin/paystubs')
+    def admin_paystubs():
+        admin_required()
+        return render_template('admin_paystubs.html', paystubs=paystubs)
+
+# Admin Benefits
+if not any(r.rule == '/admin/benefits' for r in app.url_map.iter_rules()):
+    @app.route('/admin/benefits')
+    def admin_benefits():
+        admin_required()
+        return render_template('admin_benefits.html', benefits=benefits)
+
+# Admin Careers
+if not any(r.rule == '/admin/careers/jobs' for r in app.url_map.iter_rules()):
+    @app.route('/admin/careers/jobs', methods=['GET', 'POST'])
+    def admin_careers_jobs():
+        admin_required()
+        if request.method == 'POST':
+            job = {
+                'id': len(job_listings) + 1,
+                'title': request.form['title'],
+                'location': request.form['location'],
+                'type': request.form['type'],
+                'salary': request.form['salary'],
+                'industry': request.form['industry'],
+                'desc': request.form['desc'],
+                'remote': request.form.get('remote') == 'on'
+            }
+            job_listings.append(job)
+            flash('Job added!', 'success')
+        return render_template('admin_careers_jobs.html', jobs=job_listings)
+
+    @app.route('/admin/careers/applications')
+    def admin_careers_applications():
+        admin_required()
+        return render_template('admin_careers_applications.html', applications=applications, jobs=job_listings)
+
+    @app.route('/admin/careers/goals')
+    def admin_careers_goals():
+        admin_required()
+        return render_template('admin_careers_goals.html', goals=career_goals)
+
+    @app.route('/admin/careers/badges')
+    def admin_careers_badges():
+        admin_required()
+        return render_template('admin_careers_badges.html', badges=badges)
+
+    @app.route('/admin/careers/progress')
+    def admin_careers_progress():
+        admin_required()
+        return render_template('admin_careers_progress.html', courses=course_progress)
+
+    @app.route('/admin/careers/resources', methods=['GET', 'POST'])
+    def admin_careers_resources():
+        admin_required()
+        if request.method == 'POST':
+            resources.append({
+                'id': len(resources) + 1,
+                'title': request.form['title'],
+                'url': request.form['url'],
+                'desc': request.form['desc']
+            })
+            flash('Resource added!', 'success')
+        return render_template('admin_careers_resources.html', resources=resources)
+
+# Admin Leave
+if not any(r.rule == '/admin/leave' for r in app.url_map.iter_rules()):
+    @app.route('/admin/leave')
+    def admin_leave():
+        admin_required()
+        return render_template('admin_leave.html', leaves=leave_requests)
+
+    @app.route('/admin/leave/approve/<int:req_id>', methods=['POST'])
+    def admin_approve_leave(req_id):
+        admin_required()
+        for r in leave_requests:
+            if r['id'] == req_id:
+                r['status'] = 'approved'
+                flash('Leave approved!', 'success')
+                break
+        return redirect(url_for('admin_leave'))
+
+    @app.route('/admin/leave/reject/<int:req_id>', methods=['POST'])
+    def admin_reject_leave(req_id):
+        admin_required()
+        for r in leave_requests:
+            if r['id'] == req_id:
+                r['status'] = 'rejected'
+                flash('Leave rejected.', 'error')
+                break
+        return redirect(url_for('admin_leave'))
+
+# Admin Timesheets
+if not any(r.rule == '/admin/timesheets' for r in app.url_map.iter_rules()):
+    @app.route('/admin/timesheets')
+    def admin_timesheets():
+        admin_required()
+        return render_template('admin_timesheets.html', timesheets=timesheets)
+
+    @app.route('/admin/timesheets/approve/<int:ts_id>', methods=['POST'])
+    def admin_approve_timesheet(ts_id):
+        admin_required()
+        for t in timesheets:
+            if t['id'] == ts_id:
+                t['status'] = 'approved'
+                flash('Timesheet approved!', 'success')
+                break
+        return redirect(url_for('admin_timesheets'))
+
+    @app.route('/admin/timesheets/reject/<int:ts_id>', methods=['POST'])
+    def admin_reject_timesheet(ts_id):
+        admin_required()
+        for t in timesheets:
+            if t['id'] == ts_id:
+                t['status'] = 'rejected'
+                flash('Timesheet rejected.', 'error')
+                break
+        return redirect(url_for('admin_timesheets'))
+
+# Admin Feedback
+if not any(r.rule == '/admin/feedback/all' for r in app.url_map.iter_rules()):
+    @app.route('/admin/feedback/all')
+    def admin_feedback_all():
+        admin_required()
+        return render_template('admin_feedback_all.html', feedbacks=feedbacks)
+
+    @app.route('/admin/feedback/mark-read/<int:fb_id>', methods=['POST'])
+    def admin_feedback_mark_read(fb_id):
+        admin_required()
+        for fb in feedbacks:
+            if fb['id'] == fb_id:
+                fb['read'] = True
+                flash('Feedback marked as read.', 'success')
+                break
+        return redirect(url_for('admin_feedback_all'))
+
+# Admin Profiles
+if not any(r.rule == '/admin/profiles' for r in app.url_map.iter_rules()):
+    @app.route('/admin/profiles')
+    def admin_profiles():
+        admin_required()
+        return render_template('admin_profiles.html', profiles=user_profiles)
+
+# Admin Complimentary
+if not any(r.rule == '/admin/complimentary' for r in app.url_map.iter_rules()):
+    @app.route('/admin/complimentary')
+    def admin_complimentary():
+        admin_required()
+        return render_template('admin_complimentary.html')
+
+# Admin Feedback (single page)
+if not any(r.rule == '/admin/feedback' for r in app.url_map.iter_rules()):
+    @app.route('/admin/feedback')
+    def admin_feedback():
+        admin_required()
+        return render_template('admin_feedback.html')
+
+# --- END EMPLOYEE PORTAL ADMIN ROUTES (merged) ---
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)

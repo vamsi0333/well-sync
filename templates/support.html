@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">IT Support Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Choose the type of support you need</p>
+  </div>
+
+  <!-- Support Options -->
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Submit Ticket -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+      <div class="text-center mb-6">
+        <div class="text-4xl mb-4">🎫</div>
+        <h2 class="text-2xl font-bold text-primary mb-2">Submit Ticket</h2>
+        <p class="text-gray-600 dark:text-gray-400">Report technical issues, bugs, or system problems</p>
+      </div>
+      
+      <div class="space-y-4 mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Technical issues</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">System bugs</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Access problems</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Performance issues</span>
+        </div>
+      </div>
+      
+      <form method="POST" action="{{ url_for('support') }}">
+        <input type="hidden" name="support_type" value="ticket">
+        <button type="submit" class="w-full bg-gradient-to-r from-primary to-accent text-white py-3 rounded-xl font-semibold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          Submit Ticket
+        </button>
+      </form>
+    </div>
+
+    <!-- Submit Request -->
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+      <div class="text-center mb-6">
+        <div class="text-4xl mb-4">📋</div>
+        <h2 class="text-2xl font-bold text-primary mb-2">Submit Request</h2>
+        <p class="text-gray-600 dark:text-gray-400">Request new software, hardware, or access permissions</p>
+      </div>
+      
+      <div class="space-y-4 mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Software requests</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Hardware requests</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Access permissions</span>
+        </div>
+        <div class="flex items-center space-x-3">
+          <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <span class="text-sm text-gray-600 dark:text-gray-400">Account changes</span>
+        </div>
+      </div>
+      
+      <form method="POST" action="{{ url_for('support') }}">
+        <input type="hidden" name="support_type" value="request">
+        <button type="submit" class="w-full bg-gradient-to-r from-accent to-primary text-white py-3 rounded-xl font-semibold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          Submit Request
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+      <a href="/tickets" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📋</span>
+        <div>
+          <div class="font-semibold">View My Tickets</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Check status of existing tickets</div>
+        </div>
+      </a>
+      <a href="/request-history" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📊</span>
+        <div>
+          <div class="font-semibold">Request History</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Track your previous requests</div>
+        </div>
+      </a>
+      <a href="/system-status" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">🟢</span>
+        <div>
+          <div class="font-semibold">System Status</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Check system health</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %} 

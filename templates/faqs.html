@@ -1,0 +1,174 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Frequently Asked Questions</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Find quick answers to common IT support questions</p>
+  </div>
+
+  <!-- Search Section -->
+  <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur border border-gray-200 dark:border-gray-700">
+    <div class="relative">
+      <input type="text" id="faq-search" placeholder="Search FAQs..." 
+        class="w-full p-4 pl-12 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary">
+      <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- FAQ Items -->
+  <div class="space-y-4" id="faq-container">
+    <!-- VPN Reset -->
+    <div class="faq-item bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+          <span class="text-2xl">🔐</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">How do I reset my VPN?</h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Disconnect and reconnect using the company's VPN client. If it still doesn't work, submit a hardware request through the portal.</p>
+          <div class="mt-4">
+            <a href="/submit-ticket" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition">
+              Submit Ticket
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Issues -->
+    <div class="faq-item bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+          <span class="text-2xl">📧</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Why isn't my email working?</h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Log out and back in to refresh your session. If it fails again, submit a ticket through the portal for immediate assistance.</p>
+          <div class="mt-4">
+            <a href="/submit-ticket" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition">
+              Submit Ticket
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Reset -->
+    <div class="faq-item bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+          <span class="text-2xl">🔑</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">I forgot my password. What should I do?</h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Click "Forgot Password" on the login page to receive a reset link via email. The link will expire after 24 hours.</p>
+          <div class="mt-4">
+            <a href="/forgot-password" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition">
+              Reset Password
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Printer Issues -->
+    <div class="faq-item bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+          <span class="text-2xl">🖨️</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">What if the printer won't connect?</h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Restart the printer and check the network cable. If issues persist, file a hardware ticket through the portal.</p>
+          <div class="mt-4">
+            <a href="/submit-ticket" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition">
+              Submit Ticket
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Software Installation -->
+    <div class="faq-item bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+          <span class="text-2xl">💾</span>
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">How do I request software installation?</h2>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">Visit the Service Catalog and select "Software Installation" to request company-approved software like Adobe Creative Suite or VS Code.</p>
+          <div class="mt-4">
+            <a href="/catalog" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition">
+              Service Catalog
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Support Section -->
+  <div class="bg-gradient-to-r from-primary to-accent p-6 rounded-2xl shadow-xl text-white">
+    <h3 class="text-xl font-bold mb-3 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+      Still Need Help?
+    </h3>
+    <p class="text-white/90 mb-4">Can't find the answer you're looking for? Our IT support team is here to help!</p>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a href="/submit-ticket" class="inline-flex items-center px-4 py-2 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Submit Ticket
+      </a>
+      <a href="/assistant" class="inline-flex items-center px-4 py-2 bg-white/20 text-white font-medium rounded-lg hover:bg-white/30 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        Ask AI Assistant
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple search functionality
+  document.getElementById('faq-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+      const title = item.querySelector('h2').textContent.toLowerCase();
+      const content = item.querySelector('p').textContent.toLowerCase();
+      
+      if (title.includes(searchTerm) || content.includes(searchTerm)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}

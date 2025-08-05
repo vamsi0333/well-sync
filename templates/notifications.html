@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Notifications</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Stay updated with your latest notifications</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a href="/dashboard" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Notifications List -->
+  {% if notifications %}
+    <div class="space-y-4">
+      {% for notification in notifications %}
+        <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 {% if not notification.read %}border-l-4 border-l-primary{% endif %}">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0
+                  {% if notification.type == 'warning' %}bg-orange-100 dark:bg-orange-900
+                  {% elif notification.type == 'success' %}bg-green-100 dark:bg-green-900
+                  {% elif notification.type == 'error' %}bg-red-100 dark:bg-red-900
+                  {% else %}bg-blue-100 dark:bg-blue-900{% endif %}">
+                  <svg class="w-5 h-5 
+                    {% if notification.type == 'warning' %}text-orange-600 dark:text-orange-400
+                    {% elif notification.type == 'success' %}text-green-600 dark:text-green-400
+                    {% elif notification.type == 'error' %}text-red-600 dark:text-red-400
+                    {% else %}text-blue-600 dark:text-blue-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {% if notification.type == 'warning' %}
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    {% elif notification.type == 'success' %}
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    {% elif notification.type == 'error' %}
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    {% else %}
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    {% endif %}
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-gray-900 dark:text-white font-medium mb-1">{{ notification.message }}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ notification.timestamp }}</p>
+                  {% if not notification.read %}
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-primary text-white mt-2">
+                      New
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            
+            {% if not notification.read %}
+              <form method="POST" action="/notifications/mark-read/{{ notification.id }}" class="ml-4">
+                <button type="submit" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition">
+                  Mark as read
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white/90 dark:bg-gray-900/90 p-12 rounded-2xl shadow-xl backdrop-blur text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.19 4.19A4 4 0 006.03 4h11.94c1.6 0 2.92 1.14 3.2 2.71L21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 01.19-1.81z"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Notifications</h3>
+      <p class="text-gray-600 dark:text-gray-400">You're all caught up! No new notifications.</p>
+    </div>
+  {% endif %}
+
+  <!-- Notification Stats -->
+  {% if notifications %}
+    <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur border border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Notification Summary</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ notifications|length }}</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Total</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">
+            {{ notifications|selectattr('read', 'equalto', false)|list|length }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Unread</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-green-600 dark:text-green-400">
+            {{ notifications|selectattr('read', 'equalto', true)|list|length }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Read</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">
+            {{ notifications|selectattr('type', 'equalto', 'warning')|list|length }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Warnings</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %} 

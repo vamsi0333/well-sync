@@ -1,0 +1,172 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">💰 Compensation Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Manage your paystubs and benefits</p>
+  </div>
+
+  <!-- Compensation Overview -->
+  <div class="grid md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💵</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Current Salary</h3>
+          <p class="text-2xl font-bold text-green-600">$75,000</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Annual base salary</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🏥</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Health Benefits</h3>
+          <p class="text-2xl font-bold text-blue-600">Active</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Medical, Dental, Vision</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💼</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Retirement</h3>
+          <p class="text-2xl font-bold text-purple-600">401(k)</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">6% company match</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="paystubs-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          📄 Paystubs
+        </button>
+        <button id="benefits-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          🏥 Benefits
+        </button>
+      </nav>
+    </div>
+
+    <!-- Paystubs Tab -->
+    <div id="paystubs-content" class="tab-content active p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Recent Paystubs</h2>
+        <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Download All
+        </button>
+      </div>
+      
+      {% if paystubs %}
+        <div class="space-y-4">
+          {% for paystub in paystubs %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ paystub.pay_period }}</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ paystub.issue_date }}</p>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-green-600">${{ paystub.net_pay }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Net Pay</p>
+            </div>
+            <a href="/employee/paystubs/{{ paystub.id }}" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition">
+              View Details
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📄</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Paystubs Available</h3>
+          <p class="text-gray-600 dark:text-gray-400">Your paystubs will appear here once they're generated.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Benefits Tab -->
+    <div id="benefits-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Your Benefits</h2>
+        <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Manage Benefits
+        </button>
+      </div>
+      
+      {% if benefits %}
+        <div class="grid md:grid-cols-2 gap-6">
+          {% for benefit in benefits %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex items-center space-x-3 mb-3">
+              <div class="text-2xl">
+                {% if benefit.type == 'Health' %}🏥
+                {% elif benefit.type == 'Dental' %}🦷
+                {% elif benefit.type == 'Vision' %}👁️
+                {% elif benefit.type == 'Life' %}🛡️
+                {% else %}💼{% endif %}
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ benefit.name }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ benefit.type }}</p>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Coverage:</span>
+                <span class="text-sm font-medium">{{ benefit.coverage }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Cost:</span>
+                <span class="text-sm font-medium">${{ benefit.monthly_cost }}/month</span>
+              </div>
+            </div>
+            <a href="/employee/benefits/{{ benefit.id }}" class="block mt-3 text-blue-500 hover:text-blue-600 text-sm font-medium">
+              View Details →
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">🏥</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Benefits Available</h3>
+          <p class="text-gray-600 dark:text-gray-400">Your benefits information will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+</script>
+{% endblock %} 

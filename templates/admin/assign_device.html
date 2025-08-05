@@ -1,0 +1,87 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">📱 Assign Device</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Assign available devices to employees</p>
+  </div>
+
+  <!-- Assign Device Form -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
+    {% if devices %}
+    <form method="POST" class="space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="device_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Device</label>
+          <select id="device_id" name="device_id" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Choose a device</option>
+            {% for device in devices %}
+            <option value="{{ device.id }}">{{ device.name }} ({{ device.type|title }}) - {{ device.location }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div>
+          <label for="employee_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Employee</label>
+          <select id="employee_email" name="employee_email" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Choose an employee</option>
+            {% for email in employees %}
+            <option value="{{ email }}">{{ email }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      
+      <div class="flex space-x-4 pt-6">
+        <a href="/admin/asset-management" 
+           class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center">
+          Cancel
+        </a>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+          Assign Device
+        </button>
+      </div>
+    </form>
+    {% else %}
+    <div class="text-center py-8">
+      <div class="text-4xl mb-4">📱</div>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Available Devices</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">All devices are currently assigned or under maintenance.</p>
+      <a href="/admin/asset-management" 
+         class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+        Back to Asset Management
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Available Devices List -->
+  {% if devices %}
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
+    <h2 class="text-xl font-bold text-primary mb-4">Available Devices</h2>
+    <div class="space-y-4">
+      {% for device in devices %}
+      <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ device.name }}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ device.type|title }} - {{ device.location }}</p>
+            {% if device.model %}
+            <p class="text-sm text-gray-600 dark:text-gray-400">Model: {{ device.model }}</p>
+            {% endif %}
+          </div>
+          <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+            Available
+          </span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

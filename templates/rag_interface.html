@@ -1,0 +1,160 @@
+{% extends "layout.html" %}
+
+{% block title %}RAG - AI Assistant{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            💬 Enplify AI Assistant
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            Ask questions about Enplify.ai and get intelligent responses powered by our knowledge base
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Chat Area -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Question Form -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        💭 Ask Questions
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        Get instant answers about Enplify.ai features, capabilities, and best practices
+                    </p>
+                </div>
+
+                <form method="POST" id="questionForm" class="space-y-4">
+                    <div>
+                        <label for="question" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Your Question
+                        </label>
+                        <textarea 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            id="question" 
+                            name="question" 
+                            rows="4" 
+                            placeholder="Ask me anything about Enplify.ai..."
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors duration-200">
+                        <span class="mr-2">🚀</span> Ask Question
+                    </button>
+                </form>
+            </div>
+            
+            <!-- AI Response -->
+            {% if answer %}
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        💡 AI Response
+                    </h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Question:</span>
+                        <p class="text-gray-900 dark:text-white mt-1">{{ question }}</p>
+                    </div>
+                    
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <span class="text-sm font-medium text-blue-900 dark:text-blue-100">Answer:</span>
+                        <p class="text-blue-800 dark:text-blue-200 mt-2 whitespace-pre-wrap">{{ answer }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- About Assistant -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        ℹ️ About This Assistant
+                    </h3>
+                </div>
+                
+                <p class="text-gray-600 dark:text-gray-400 mb-4">
+                    This AI assistant is trained specifically on Enplify.ai documentation and knowledge base.
+                </p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">What you can ask:</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>• Product features and capabilities</li>
+                            <li>• Technical specifications</li>
+                            <li>• Implementation guides</li>
+                            <li>• Best practices</li>
+                            <li>• Troubleshooting help</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Example questions:</h4>
+                        <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                            <li>• "What is Enplify.ai?"</li>
+                            <li>• "How does the platform work?"</li>
+                            <li>• "What are the main features?"</li>
+                            <li>• "How do I get started?"</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <div class="flex items-start">
+                        <span class="text-yellow-600 dark:text-yellow-400 mr-2">⚠️</span>
+                        <div class="text-sm text-yellow-800 dark:text-yellow-200">
+                            <span class="font-medium">Note:</span> This assistant can only answer questions related to Enplify.ai. For other topics, it will politely redirect you.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="bg-gradient-to-br from-primary to-primary-dark rounded-lg p-6 text-white">
+                <h3 class="text-lg font-semibold mb-3">⚡ Quick Actions</h3>
+                <div class="space-y-2">
+                    <button onclick="setQuestion('What is Enplify.ai?')" class="w-full text-left text-sm hover:bg-white/10 rounded px-2 py-1 transition-colors">
+                        What is Enplify.ai?
+                    </button>
+                    <button onclick="setQuestion('How does the platform work?')" class="w-full text-left text-sm hover:bg-white/10 rounded px-2 py-1 transition-colors">
+                        How does the platform work?
+                    </button>
+                    <button onclick="setQuestion('What are the main features?')" class="w-full text-left text-sm hover:bg-white/10 rounded px-2 py-1 transition-colors">
+                        What are the main features?
+                    </button>
+                    <button onclick="setQuestion('How do I get started?')" class="w-full text-left text-sm hover:bg-white/10 rounded px-2 py-1 transition-colors">
+                        How do I get started?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('questionForm').addEventListener('submit', function(e) {
+    const question = document.getElementById('question').value.trim();
+    if (!question) {
+        e.preventDefault();
+        alert('Please enter a question.');
+        return false;
+    }
+});
+
+function setQuestion(question) {
+    document.getElementById('question').value = question;
+    document.getElementById('question').focus();
+}
+</script>
+{% endblock %} 

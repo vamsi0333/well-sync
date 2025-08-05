@@ -1,0 +1,282 @@
+{% extends "employee_portal/layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ course.title }}</h1>
+        <p class="text-gray-600 dark:text-gray-400">{{ course.description }}</p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500 dark:text-gray-400">Passing Score</div>
+        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ course.passing_score }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Info -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Duration</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.duration }}</div>
+        </div>
+      </div>
+      
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-green-600 dark:text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Difficulty</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.difficulty }}</div>
+        </div>
+      </div>
+      
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-purple-600 dark:text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+        </svg>
+        <div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Badge</div>
+          <div class="font-semibold text-gray-900 dark:text-white">{{ course.badge }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Form -->
+  <form method="POST" action="{{ url_for('employee_learning') }}" class="space-y-8" id="quizForm">
+    <input type="hidden" name="course_id" value="{{ course.id }}">
+    
+    {% for question in course.questions %}
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 question-container" data-question="{{ loop.index }}">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          Question {{ loop.index }} of {{ course.questions|length }}
+        </h3>
+        <p class="text-gray-700 dark:text-gray-300">{{ question.question }}</p>
+      </div>
+      
+      <div class="space-y-3">
+        {% for option in question.options %}
+        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors question-option">
+          <input type="radio" name="answers[]" value="{{ loop.index0 }}" required
+                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+          <span class="ml-3 text-gray-700 dark:text-gray-300">{{ option }}</span>
+        </label>
+        {% endfor %}
+      </div>
+      
+      <!-- Question Feedback -->
+      <div class="mt-4 p-3 rounded-lg hidden question-feedback">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2 text-green-500 hidden correct-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <svg class="w-5 h-5 mr-2 text-red-500 hidden incorrect-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span class="text-sm font-medium feedback-text"></span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    
+    <!-- Submit Button -->
+    <div class="flex justify-between items-center">
+      <a href="{{ url_for('employee_learning') }}" 
+         class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
+        Back to Courses
+      </a>
+      <button type="submit" 
+              class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200">
+        Submit Quiz
+      </button>
+    </div>
+  </form>
+
+  <!-- Quiz Instructions -->
+  <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">Quiz Instructions</h3>
+    <ul class="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>Read each question carefully before selecting your answer</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>You can review your answers before submitting</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>You need to score {{ course.passing_score }}% or higher to pass</span>
+      </li>
+      <li class="flex items-start">
+        <span class="mr-2">•</span>
+        <span>Based on your score, we'll recommend additional courses</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// Quiz functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const questionOptions = document.querySelectorAll('.question-option');
+  const questionContainers = document.querySelectorAll('.question-container');
+  
+  // Handle individual question selection
+  questionOptions.forEach(option => {
+    const radio = option.querySelector('input[type="radio"]');
+    const label = option.querySelector('span');
+    
+    radio.addEventListener('change', function() {
+      // Remove selected state from other options in this question
+      const questionContainer = option.closest('.question-container');
+      questionContainer.querySelectorAll('.question-option').forEach(opt => {
+        opt.classList.remove('bg-blue-50', 'border-blue-300', 'dark:bg-blue-900/20', 'dark:border-blue-600');
+      });
+      
+      // Add selected state to current option
+      option.classList.add('bg-blue-50', 'border-blue-300', 'dark:bg-blue-900/20', 'dark:border-blue-600');
+      
+      // Show immediate feedback (for demo purposes)
+      showQuestionFeedback(questionContainer, this.value === '0'); // Assuming first option is correct
+    });
+  });
+  
+  // Form submission
+  document.getElementById('quizForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const answers = {};
+    
+    // Collect all answers
+    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+      const questionIndex = radio.name.match(/\[(\d+)\]/)[1];
+      answers[questionIndex] = radio.value;
+    });
+    
+    // Calculate score
+    const totalQuestions = {{ course.questions|length }};
+    const correctAnswers = Object.values(answers).filter(answer => answer === '0').length;
+    const score = Math.round((correctAnswers / totalQuestions) * 100);
+    
+    // Show results and recommendations
+    showQuizResults(score, totalQuestions, correctAnswers);
+  });
+});
+
+function showQuestionFeedback(container, isCorrect) {
+  const feedback = container.querySelector('.question-feedback');
+  const correctIcon = feedback.querySelector('.correct-icon');
+  const incorrectIcon = feedback.querySelector('.incorrect-icon');
+  const feedbackText = feedback.querySelector('.feedback-text');
+  
+  feedback.classList.remove('hidden');
+  
+  if (isCorrect) {
+    correctIcon.classList.remove('hidden');
+    incorrectIcon.classList.add('hidden');
+    feedbackText.textContent = 'Correct! Well done.';
+    feedback.classList.add('bg-green-50', 'border-green-200', 'dark:bg-green-900/20', 'dark:border-green-800');
+  } else {
+    correctIcon.classList.add('hidden');
+    incorrectIcon.classList.remove('hidden');
+    feedbackText.textContent = 'Incorrect. Review the material and try again.';
+    feedback.classList.add('bg-red-50', 'border-red-200', 'dark:bg-red-900/20', 'dark:border-red-800');
+  }
+}
+
+function showQuizResults(score, totalQuestions, correctAnswers) {
+  const passingScore = {{ course.passing_score }};
+  const passed = score >= passingScore;
+  
+  // Create results modal
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+  modal.innerHTML = 
+    '<div class="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full mx-4">' +
+      '<div class="text-center">' +
+        '<div class="text-6xl mb-4">' + (passed ? '🎉' : '📚') + '</div>' +
+        '<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">' +
+          (passed ? 'Congratulations!' : 'Keep Learning!') +
+        '</h2>' +
+        '<p class="text-gray-600 dark:text-gray-400 mb-6">' +
+          'You scored ' + score + '% (' + correctAnswers + '/' + totalQuestions + ' correct)' +
+        '</p>' +
+        
+        '<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">' +
+          '<h3 class="font-semibold text-gray-900 dark:text-white mb-2">Recommended Courses</h3>' +
+          '<div class="space-y-2 text-sm">' +
+            getCourseRecommendations(score) +
+          '</div>' +
+        '</div>' +
+        
+        '<div class="flex space-x-3">' +
+          '<button onclick="closeResults()" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">' +
+            'Back to Courses' +
+          '</button>' +
+          '<button onclick="retakeQuiz()" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">' +
+            (passed ? 'Continue Learning' : 'Retake Quiz') +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  
+  document.body.appendChild(modal);
+}
+
+function getCourseRecommendations(score) {
+  if (score >= 90) {
+    return 
+      '<div class="flex items-center p-2 bg-green-50 dark:bg-green-900/20 rounded">' +
+        '<span class="mr-2">🚀</span>' +
+        '<span>Advanced Python Programming</span>' +
+      '</div>' +
+      '<div class="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded">' +
+        '<span class="mr-2">🧠</span>' +
+        '<span>Machine Learning Fundamentals</span>' +
+      '</div>';
+  } else if (score >= 70) {
+    return 
+      '<div class="flex items-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded">' +
+        '<span class="mr-2">📖</span>' +
+        '<span>Intermediate Python Concepts</span>' +
+      '</div>' +
+      '<div class="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded">' +
+        '<span class="mr-2">🔧</span>' +
+        '<span>Data Structures & Algorithms</span>' +
+      '</div>';
+  } else {
+    return 
+      '<div class="flex items-center p-2 bg-red-50 dark:bg-red-900/20 rounded">' +
+        '<span class="mr-2">📚</span>' +
+        '<span>Python Basics Review</span>' +
+      '</div>' +
+      '<div class="flex items-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded">' +
+        '<span class="mr-2">🎯</span>' +
+        '<span>Programming Fundamentals</span>' +
+      '</div>';
+  }
+}
+
+function closeResults() {
+  document.querySelector('.fixed.inset-0').remove();
+  window.location.href = "{{ url_for('employee_learning') }}";
+}
+
+function retakeQuiz() {
+  document.querySelector('.fixed.inset-0').remove();
+  location.reload();
+}
+</script>
+{% endblock %} 

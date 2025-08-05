@@ -1,0 +1,93 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Timesheets</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Review employee time tracking</p>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Timesheets</h2>
+        <div class="flex space-x-2">
+          <input type="text" placeholder="Search timesheets..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Employee</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Week</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Hours</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {% for timesheet in timesheets %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{{ timesheet.employee_name }}</div>
+              <div class="text-sm text-gray-500 dark:text-gray-400">{{ timesheet.employee_email }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900 dark:text-white">{{ timesheet.week_of }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900 dark:text-white">{{ timesheet.total_hours }} hours</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                {% if timesheet.status == 'approved' %}bg-green-100 text-green-800
+                {% elif timesheet.status == 'pending' %}bg-yellow-100 text-yellow-800
+                {% elif timesheet.status == 'rejected' %}bg-red-100 text-red-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ timesheet.status|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex space-x-2">
+                <button onclick="viewTimesheet({{ timesheet.id }})" class="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 px-2 py-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition">
+                  View
+                </button>
+                <button onclick="approveTimesheet({{ timesheet.id }})" class="text-green-600 hover:text-green-900 dark:hover:text-green-400 px-2 py-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20 transition">
+                  Approve
+                </button>
+                <button onclick="rejectTimesheet({{ timesheet.id }})" class="text-red-600 hover:text-red-900 dark:hover:text-red-400 px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function viewTimesheet(timesheetId) {
+  alert('View timesheet functionality would be implemented here for timesheet ID: ' + timesheetId);
+}
+
+function approveTimesheet(timesheetId) {
+  if (confirm('Are you sure you want to approve this timesheet?')) {
+    alert('Approve timesheet functionality would be implemented here for timesheet ID: ' + timesheetId);
+  }
+}
+
+function rejectTimesheet(timesheetId) {
+  if (confirm('Are you sure you want to reject this timesheet?')) {
+    alert('Reject timesheet functionality would be implemented here for timesheet ID: ' + timesheetId);
+  }
+}
+</script>
+{% endblock %} 

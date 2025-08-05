@@ -1,0 +1,322 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">💼 Recruitment Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Manage job postings and AI-powered recruitment</p>
+  </div>
+
+  <!-- Recruitment Overview -->
+  <div class="grid md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💼</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Active Jobs</h3>
+          <p class="text-2xl font-bold text-blue-600">{{ jobs|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Open positions</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📝</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Applications</h3>
+          <p class="text-2xl font-bold text-green-600">{{ applications|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Total applications</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🤖</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">ATS System</h3>
+          <p class="text-2xl font-bold text-purple-600">Active</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">AI-powered screening</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📊</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Success Rate</h3>
+          <p class="text-2xl font-bold text-orange-600">85%</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Quality matches</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-4 gap-4">
+      <a href="/admin/jobs" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">💼</span>
+        <div>
+          <div class="font-semibold">Manage Jobs</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">View all job postings</div>
+        </div>
+      </a>
+      <a href="/admin/jobs/add" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">➕</span>
+        <div>
+          <div class="font-semibold">Post Job</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Create new position</div>
+        </div>
+      </a>
+      <a href="/ai/ats" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <div class="font-semibold">ATS System</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">AI recruitment tools</div>
+        </div>
+      </a>
+      <a href="/admin/applications" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📝</span>
+        <div>
+          <div class="font-semibold">Applications</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Review candidates</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="jobs-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          💼 Job Postings
+        </button>
+        <button id="applications-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          📝 Applications
+        </button>
+        <button id="ats-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          🤖 ATS System
+        </button>
+      </nav>
+    </div>
+
+    <!-- Jobs Tab -->
+    <div id="jobs-content" class="tab-content active p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Active Job Postings</h2>
+        <a href="/admin/jobs" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          View All
+        </a>
+      </div>
+      
+      {% if jobs %}
+        <div class="space-y-4">
+          {% for job in jobs[:5] %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ job.title }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ job.department }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ job.location }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ job.salary_range }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if job.status == 'active' %}bg-green-100 text-green-800
+                  {% elif job.status == 'draft' %}bg-yellow-100 text-yellow-800
+                  {% elif job.status == 'closed' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ job.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ job.applications|length }} applications</p>
+              </div>
+            </div>
+            {% if job.description %}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ job.description[:100] }}...</p>
+            {% endif %}
+            <div class="flex space-x-2 mt-3">
+              <a href="/admin/jobs/{{ job.id }}" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                View Details →
+              </a>
+              <a href="/admin/jobs/{{ job.id }}/edit" class="text-green-500 hover:text-green-600 text-sm font-medium">
+                Edit →
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">💼</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Job Postings</h3>
+          <p class="text-gray-600 dark:text-gray-400">Create your first job posting to get started.</p>
+          <a href="/admin/jobs/add" class="inline-block mt-4 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+            Post First Job
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Applications Tab -->
+    <div id="applications-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Recent Applications</h2>
+        <a href="/admin/applications" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          View All
+        </a>
+      </div>
+      
+      {% if applications %}
+        <div class="space-y-4">
+          {% for application in applications[:5] %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ application.candidate_name }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ application.job_title }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ application.email }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ application.applied_date }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if application.status == 'approved' %}bg-green-100 text-green-800
+                  {% elif application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                  {% elif application.status == 'rejected' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ application.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Score: {{ application.score|default('N/A') }}</p>
+              </div>
+            </div>
+            <div class="flex space-x-2 mt-3">
+              <a href="/admin/applications/{{ application.id }}" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                View Details →
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📝</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Applications</h3>
+          <p class="text-gray-600 dark:text-gray-400">Applications will appear here once candidates apply.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- ATS Tab -->
+    <div id="ats-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">AI-Powered ATS System</h2>
+        <a href="/ai/ats" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Open ATS
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- ATS Features -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-primary mb-4">🤖 ATS Features</h3>
+          <div class="space-y-3">
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400">AI-powered resume screening</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Skills matching algorithm</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Automated candidate ranking</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span class="text-sm text-gray-600 dark:text-gray-400">Interview scheduling</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ATS Stats -->
+        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-primary mb-4">📊 ATS Statistics</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Resumes Processed:</span>
+              <span class="text-sm font-medium">1,247</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Average Processing Time:</span>
+              <span class="text-sm font-medium">2.3 seconds</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Accuracy Rate:</span>
+              <span class="text-sm font-medium">94.2%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-600 dark:text-gray-400">Time Saved:</span>
+              <span class="text-sm font-medium">85 hours/week</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATS Quick Actions -->
+      <div class="mt-6 grid md:grid-cols-3 gap-4">
+        <a href="/ai/ats" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+          <span class="text-2xl">📄</span>
+          <div>
+            <div class="font-semibold">Process Resumes</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Upload and screen candidates</div>
+          </div>
+        </a>
+        <a href="/ai/ats" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+          <span class="text-2xl">🎯</span>
+          <div>
+            <div class="font-semibold">Match Candidates</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Find best fits for positions</div>
+          </div>
+        </a>
+        <a href="/ai/ats" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+          <span class="text-2xl">📊</span>
+          <div>
+            <div class="font-semibold">View Analytics</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Recruitment insights</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+</script>
+{% endblock %} 

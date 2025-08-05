@@ -1,0 +1,194 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">🆘 Employee Support Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Get help with any questions or issues</p>
+  </div>
+
+  <!-- Support Overview -->
+  <div class="grid md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">💻</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">IT Support</h3>
+          <p class="text-2xl font-bold text-blue-600">24/7</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Technical assistance</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">👥</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">HR Support</h3>
+          <p class="text-2xl font-bold text-green-600">9-5</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Human resources help</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📚</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Self-Service</h3>
+          <p class="text-2xl font-bold text-purple-600">Always</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Knowledge base access</p>
+    </div>
+  </div>
+
+  <!-- Support Categories -->
+  <div class="grid md:grid-cols-2 gap-6">
+    {% for option in support_options %}
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+      <div class="flex items-start space-x-4">
+        <div class="text-4xl">{{ option.icon }}</div>
+        <div class="flex-1">
+          <h3 class="text-xl font-bold text-primary mb-2">{{ option.title }}</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">{{ option.description }}</p>
+          <div class="flex items-center space-x-2">
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full font-medium">
+              {{ option.category }}
+            </span>
+            <a href="{{ option.link }}" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition text-sm font-medium">
+              Get Help
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Quick Help -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Help</h3>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- FAQ Section -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+        <h4 class="text-lg font-semibold text-primary mb-4">📋 Frequently Asked Questions</h4>
+        <div class="space-y-3">
+          <details class="group">
+            <summary class="flex justify-between items-center cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-primary">
+              How do I request time off?
+              <span class="text-primary group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Go to Time Management → Leave Requests and submit a new request with your dates and reason.
+            </p>
+          </details>
+          
+          <details class="group">
+            <summary class="flex justify-between items-center cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-primary">
+              How do I access my paystubs?
+              <span class="text-primary group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Visit Compensation → Paystubs to view and download your recent paystubs.
+            </p>
+          </details>
+          
+          <details class="group">
+            <summary class="flex justify-between items-center cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-primary">
+              What benefits am I eligible for?
+              <span class="text-primary group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Check Compensation → Benefits to see your current benefits and coverage details.
+            </p>
+          </details>
+          
+          <details class="group">
+            <summary class="flex justify-between items-center cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-primary">
+              How do I submit an IT ticket?
+              <span class="text-primary group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Click "IT Support" above or visit the IT Portal to submit technical issues and requests.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+        <h4 class="text-lg font-semibold text-primary mb-4">📞 Contact Information</h4>
+        <div class="space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">💻</div>
+            <div>
+              <div class="font-medium text-sm">IT Support</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">support@company.com</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">555-IT-HELP</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">👥</div>
+            <div>
+              <div class="font-medium text-sm">HR Support</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">hr@company.com</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">555-HR-HELP</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">💰</div>
+            <div>
+              <div class="font-medium text-sm">Payroll Support</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">payroll@company.com</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">555-PAY-HELP</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">🏢</div>
+            <div>
+              <div class="font-medium text-sm">Office Hours</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Mon-Fri 9:00 AM - 5:00 PM</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Emergency: 24/7 IT Support</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Support -->
+  <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6">
+    <div class="flex items-center space-x-3 mb-4">
+      <div class="text-3xl">🚨</div>
+      <div>
+        <h3 class="text-lg font-bold text-red-700 dark:text-red-400">Emergency Support</h3>
+        <p class="text-sm text-red-600 dark:text-red-300">For urgent issues outside business hours</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+        <div class="flex items-center space-x-3">
+          <div class="text-2xl">💻</div>
+          <div>
+            <div class="font-medium text-sm">IT Emergency</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">555-IT-EMERGENCY</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-4">
+        <div class="flex items-center space-x-3">
+          <div class="text-2xl">👥</div>
+          <div>
+            <div class="font-medium text-sm">HR Emergency</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">555-HR-EMERGENCY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Submit IT Service Request</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Request hardware, software, access, or other IT services</p>
+  </div>
+
+  <!-- Request Form -->
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white/90 dark:bg-gray-900/90 p-8 rounded-2xl shadow-xl backdrop-blur border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Service Request</h2>
+          <p class="text-gray-600 dark:text-gray-400">We'll process your request and get back to you</p>
+        </div>
+      </div>
+
+      <form method="POST" action="/submit-request" class="space-y-6" id="request-form">
+    <div>
+          <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Request Type *</label>
+          <select name="type" id="type" required
+            class="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary transition">
+            <option value="">Select request type</option>
+            <option value="hardware" {% if prefill_type == 'hardware' %}selected{% endif %}>Hardware - Laptop, accessories, peripherals</option>
+            <option value="software" {% if prefill_type == 'software' %}selected{% endif %}>Software - Applications, tools, licenses</option>
+            <option value="access" {% if prefill_type == 'access' %}selected{% endif %}>Access - Permissions, accounts, systems</option>
+            <option value="other" {% if prefill_type == 'other' %}selected{% endif %}>Other - Custom requests</option>
+      </select>
+    </div>
+
+    <div>
+          <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject *</label>
+          <input type="text" name="subject" id="subject" required 
+            class="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary transition"
+            placeholder="Brief description of your request" />
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description *</label>
+          <textarea name="description" id="description" rows="5" required 
+            class="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary transition resize-none"
+            placeholder="Provide detailed information about your request, including any specific requirements or preferences..."></textarea>
+        </div>
+
+        <div>
+          <label for="urgency" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Urgency Level</label>
+          <select name="urgency" id="urgency"
+            class="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary transition">
+            <option value="normal">Normal - Standard processing time</option>
+            <option value="urgent">Urgent - Needed within 1-2 days</option>
+            <option value="critical">Critical - Needed immediately</option>
+          </select>
+    </div>
+
+    <div>
+          <label for="attachments" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Attachments (Optional)</label>
+          <input type="file" name="attachments" id="attachments" multiple accept=".png,.jpg,.jpeg,.gif,.pdf,.doc,.docx"
+            class="w-full p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark">
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Supported formats: PNG, JPG, GIF, PDF, DOC, DOCX (Max 5 files)</p>
+    </div>
+
+        <button type="submit" id="submit-btn"
+          class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2">
+          <span id="submit-btn-text">Submit Request</span>
+          <svg id="submit-spinner" class="w-5 h-5 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+          </svg>
+    </button>
+  </form>
+    </div>
+
+    <!-- Service Catalog Link -->
+    <div class="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-2xl border border-purple-200 dark:border-purple-800">
+      <h3 class="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-3 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        Browse Service Catalog
+      </h3>
+      <p class="text-purple-800 dark:text-purple-200 text-sm mb-4">Not sure what to request? Browse our service catalog for common IT services and resources.</p>
+      <a href="/catalog" class="inline-flex items-center px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 font-medium rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        View Service Catalog
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Show spinner on submit
+  document.getElementById('request-form').addEventListener('submit', function() {
+    document.getElementById('submit-btn-text').classList.add('hidden');
+    document.getElementById('submit-spinner').classList.remove('hidden');
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+# Azure OpenAI Configuration for RAG System
+# Copy this file to .env and fill in your actual values
+# Get these values from your Azure OpenAI service
+
+# Chat Model Configuration
+AZURE_OPENAI_API_KEY_CHAT=your_azure_openai_chat_api_key_here
+AZURE_OPENAI_ENDPOINT_CHAT=https://your-resource-name.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT_CHAT=your-chat-deployment-name
+
+# Embeddings Model Configuration
+AZURE_OPENAI_API_KEY_EMBED=your_azure_openai_embeddings_api_key_here
+AZURE_OPENAI_ENDPOINT_EMBED=https://your-resource-name.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT_EMBED=your-embeddings-deployment-name
+
+# Azure Search Configuration
+AZURE_SEARCH_ENDPOINT=https://your-search-service.search.windows.net
+AZURE_SEARCH_ADMIN_KEY=your_azure_search_admin_key_here
+AZURE_SEARCH_INDEX_NAME=your-search-index-name
+
+# Optional: Flask Configuration
+FLASK_ENV=development
+SECRET_KEY=your-secret-key-here 

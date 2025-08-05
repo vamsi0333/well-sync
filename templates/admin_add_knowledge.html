@@ -1,0 +1,99 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Knowledge Document</h1>
+        <p class="text-gray-600">Create a new knowledge document for the knowledge base</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Document Title</label>
+                    <input type="text" id="title" name="title" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select id="category" name="category" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="author" class="block text-sm font-medium text-gray-700 mb-2">Author</label>
+                    <input type="text" id="author" name="author" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
+                    <input type="text" id="tags" name="tags"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="e.g., troubleshooting, setup, guide">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea id="description" name="description" rows="3" required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Brief description of the document content"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                    <textarea id="content" name="content" rows="10" required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Document content in markdown format"></textarea>
+                </div>
+
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select id="status" name="status" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                    <select id="priority" name="priority" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label for="file" class="block text-sm font-medium text-gray-700 mb-2">Attach File (Optional)</label>
+                    <input type="file" id="file" name="file" accept=".pdf,.doc,.docx,.txt"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-sm text-gray-500 mt-1">Supported formats: PDF, DOC, DOCX, TXT</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ url_for('admin_knowledge') }}" 
+                   class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Create Document
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

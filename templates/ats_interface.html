@@ -1,0 +1,185 @@
+{% extends "layout.html" %}
+
+{% block title %}ATS - Resume Processing{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            🤖 Resume Processing System
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            Upload resumes and match them against job descriptions using AI-powered analysis
+        </p>
+    </div>
+
+    {% if results %}
+    <!-- Results Section -->
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4">📊 Processing Results</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Job Description:</span>
+                <p class="text-gray-900 dark:text-white">{{ job_description[:100] }}{% if job_description|length > 100 %}...{% endif %}</p>
+            </div>
+            <div>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Threshold:</span>
+                <p class="text-gray-900 dark:text-white">{{ threshold }}%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Filename</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">TF-IDF Score</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">SBERT Score</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Final Score</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for result in results %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                            {{ result.Filename }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            {% if result['TF-IDF Score (%)'] != 'N/A' %}
+                                {{ result['TF-IDF Score (%)'] }}%
+                            {% else %}
+                                <span class="text-gray-400">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            {% if result['SBERT Score (%)'] != 'N/A' %}
+                                {{ result['SBERT Score (%)'] }}%
+                            {% else %}
+                                <span class="text-gray-400">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">
+                            {% if result['Final Match Score (%)'] != 'N/A' %}
+                                <span class="text-gray-900 dark:text-white">{{ result['Final Match Score (%)'] }}%</span>
+                            {% else %}
+                                <span class="text-gray-400">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if result.Label == 'Selected' %}
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    ✅ Selected
+                                </span>
+                            {% elif result.Label == 'Rejected' %}
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                    ❌ Rejected
+                                </span>
+                            {% else %}
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                    ⚠️ Invalid
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-6">
+        <a href="{{ url_for('ats_interface') }}" class="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors duration-200">
+            <span class="mr-2">📤</span> Process New Resumes
+        </a>
+    </div>
+
+    {% else %}
+    <!-- Upload Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                📤 Upload Resumes for Processing
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400">
+                Upload PDF resumes and provide a job description to get AI-powered matching results
+            </p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label for="job_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Job Description *
+                </label>
+                <textarea 
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    id="job_description" 
+                    name="job_description" 
+                    rows="6" 
+                    placeholder="Enter the job description here..."
+                    required
+                ></textarea>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Provide a detailed job description to match against resumes.
+                </p>
+            </div>
+            
+            <div>
+                <label for="threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Match Threshold (%)
+                </label>
+                <input 
+                    type="number" 
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    id="threshold" 
+                    name="threshold" 
+                    value="75" 
+                    min="0" 
+                    max="100"
+                >
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Minimum score required to consider a resume as "Selected" (0-100%).
+                </p>
+            </div>
+            
+            <div>
+                <label for="resumes_folder" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Upload Resumes *
+                </label>
+                <input 
+                    type="file" 
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark"
+                    id="resumes_folder" 
+                    name="resumes_folder" 
+                    multiple 
+                    accept=".pdf"
+                    required
+                >
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Select at least 3 PDF resume files. Only PDF files are accepted.
+                </p>
+            </div>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">ℹ️ How it works:</h4>
+                <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• Upload at least 3 PDF resume files</li>
+                    <li>• Provide a detailed job description</li>
+                    <li>• The system uses both TF-IDF and SBERT similarity scoring</li>
+                    <li>• Final score combines both methods (20% TF-IDF + 80% SBERT)</li>
+                    <li>• Resumes with scores above the threshold are marked as "Selected"</li>
+                </ul>
+            </div>
+            
+            <button type="submit" class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors duration-200">
+                <span class="mr-2">⚙️</span> Process Resumes
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+    <h1 class="text-4xl font-bold mb-8">Flexible Work at NexlQon</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+        <div>
+            <h2 class="text-3xl font-semibold mb-6">Work Your Way</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+                At NexlQon, we believe that flexibility is key to maintaining a healthy work-life balance and achieving peak performance. Our hybrid workplace model empowers you to work where and when you're most productive.
+            </p>
+            <div class="bg-orange-100 dark:bg-orange-900 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">Flexible Options</h3>
+                <ul class="space-y-3">
+                    <li>✓ Remote work opportunities</li>
+                    <li>✓ Flexible hours</li>
+                    <li>✓ Hybrid office model</li>
+                    <li>✓ Work-life integration</li>
+                </ul>
+            </div>
+        </div>
+        <img src="/static/images/flexible-work.jpg" alt="Flexible Work at NexlQon" class="rounded-xl shadow-2xl w-full h-[400px] object-cover">
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Remote Work -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Remote Work</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                Work from anywhere with our comprehensive remote work policy. We provide the tools and support you need to be productive from your chosen workspace.
+            </p>
+        </div>
+
+        <!-- Hybrid Model -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Hybrid Model</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                Blend the best of both worlds with our hybrid work model. Choose when to work from home and when to collaborate in person at our modern offices.
+            </p>
+        </div>
+
+        <!-- Work-Life Integration -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Work-Life Integration</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                Structure your workday around your life, not the other way around. We focus on results and trust you to manage your time effectively.
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-16">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-6">Our Approach</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">What We Provide</h3>
+                    <ul class="space-y-3">
+                        <li>• Home office setup allowance</li>
+                        <li>• Latest technology and tools</li>
+                        <li>• Virtual collaboration platforms</li>
+                        <li>• Regular team meetups</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">What to Expect</h3>
+                    <ul class="space-y-3">
+                        <li>• Clear communication channels</li>
+                        <li>• Regular check-ins with your team</li>
+                        <li>• Outcome-based performance evaluation</li>
+                        <li>• Strong support network</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-16 text-center">
+        <h2 class="text-3xl font-bold mb-6">Ready for a More Flexible Way of Working?</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+            Join NexlQon and experience a work environment that adapts to your needs while fostering collaboration and innovation.
+        </p>
+        <a href="/careers" class="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors">
+            View Open Positions
+        </a>
+    </div>
+</div>
+{% endblock %}

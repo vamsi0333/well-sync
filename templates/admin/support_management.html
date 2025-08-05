@@ -1,0 +1,224 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">🛠️ Support Management Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Manage all support tickets and requests</p>
+  </div>
+
+  <!-- Support Overview -->
+  <div class="grid md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">🎫</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Total Tickets</h3>
+          <p class="text-2xl font-bold text-blue-600">{{ tickets|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">All support tickets</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📋</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Total Requests</h3>
+          <p class="text-2xl font-bold text-green-600">{{ requests|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">All service requests</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">⏳</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Pending</h3>
+          <p class="text-2xl font-bold text-orange-600">{{ tickets|selectattr('status', 'equalto', 'open')|list|length + requests|selectattr('status', 'equalto', 'pending')|list|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Awaiting resolution</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">✅</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Resolved</h3>
+          <p class="text-2xl font-bold text-green-600">{{ tickets|selectattr('status', 'equalto', 'closed')|list|length + requests|selectattr('status', 'equalto', 'approved')|list|length }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Completed items</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+      <a href="/admin/tickets" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">🎫</span>
+        <div>
+          <div class="font-semibold">Manage Tickets</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">View and update tickets</div>
+        </div>
+      </a>
+      <a href="/admin/requests" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📋</span>
+        <div>
+          <div class="font-semibold">Manage Requests</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Handle service requests</div>
+        </div>
+      </a>
+      <a href="/submit-ticket" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">➕</span>
+        <div>
+          <div class="font-semibold">Create Ticket</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Submit new ticket</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="tickets-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          🎫 Support Tickets
+        </button>
+        <button id="requests-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          📋 Service Requests
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tickets Tab -->
+    <div id="tickets-content" class="tab-content active p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Support Tickets</h2>
+        <a href="/admin/tickets" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          View All
+        </a>
+      </div>
+      
+      {% if tickets %}
+        <div class="space-y-4">
+          {% for ticket in tickets[:5] %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ ticket.title }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ ticket.user_email }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ ticket.date }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if ticket.status == 'closed' %}bg-green-100 text-green-800
+                  {% elif ticket.status == 'open' %}bg-yellow-100 text-yellow-800
+                  {% elif ticket.status == 'in_progress' %}bg-blue-100 text-blue-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ ticket.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ ticket.priority }}</p>
+              </div>
+            </div>
+            {% if ticket.description %}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ ticket.description[:100] }}...</p>
+            {% endif %}
+            <div class="flex space-x-2 mt-3">
+              <a href="/admin/tickets" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                View Details →
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">🎫</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Tickets Available</h3>
+          <p class="text-gray-600 dark:text-gray-400">Support tickets will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Requests Tab -->
+    <div id="requests-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Service Requests</h2>
+        <a href="/admin/requests" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          View All
+        </a>
+      </div>
+      
+      {% if requests %}
+        <div class="space-y-4">
+          {% for request in requests[:5] %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ request.title }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ request.user_email }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ request.date }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if request.status == 'approved' %}bg-green-100 text-green-800
+                  {% elif request.status == 'pending' %}bg-yellow-100 text-yellow-800
+                  {% elif request.status == 'rejected' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ request.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ request.type }}</p>
+              </div>
+            </div>
+            {% if request.description %}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ request.description[:100] }}...</p>
+            {% endif %}
+            <div class="flex space-x-2 mt-3">
+              <a href="/admin/requests" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                View Details →
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📋</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Requests Available</h3>
+          <p class="text-gray-600 dark:text-gray-400">Service requests will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+</script>
+{% endblock %} 

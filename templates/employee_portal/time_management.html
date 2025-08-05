@@ -1,0 +1,238 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">⏰ Time Management Center</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Manage your leave requests and timesheets</p>
+  </div>
+
+  <!-- Time Overview -->
+  <div class="grid md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📅</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Leave Balance</h3>
+          <p class="text-2xl font-bold text-green-600">15 days</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Available PTO</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">⏱️</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">This Week</h3>
+          <p class="text-2xl font-bold text-blue-600">40 hrs</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Hours worked</p>
+    </div>
+    
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="text-3xl">📊</div>
+        <div>
+          <h3 class="text-lg font-semibold text-primary">Overtime</h3>
+          <p class="text-2xl font-bold text-orange-600">2 hrs</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-400">This week</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6">
+    <h3 class="text-xl font-bold text-primary mb-4">Quick Actions</h3>
+    <div class="grid md:grid-cols-2 gap-4">
+      <a href="/employee/leave" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">📝</span>
+        <div>
+          <div class="font-semibold">Request Leave</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Submit a new leave request</div>
+        </div>
+      </a>
+      <a href="/employee/timesheet" class="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-md transition">
+        <span class="text-2xl">⏰</span>
+        <div>
+          <div class="font-semibold">Log Time</div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">Update your timesheet</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-8 px-6" aria-label="Tabs">
+        <button id="leave-tab" class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+          📅 Leave Requests
+        </button>
+        <button id="timesheet-tab" class="tab-button py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+          ⏰ Timesheet
+        </button>
+      </nav>
+    </div>
+
+    <!-- Leave Requests Tab -->
+    <div id="leave-content" class="tab-content active p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Your Leave Requests</h2>
+        <a href="/employee/leave" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          New Request
+        </a>
+      </div>
+      
+      {% if leave_requests %}
+        <div class="space-y-4">
+          {% for request in leave_requests %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ request.leave_type }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ request.start_date }} - {{ request.end_date }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ request.total_days }} days</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if request.status == 'approved' %}bg-green-100 text-green-800
+                  {% elif request.status == 'pending' %}bg-yellow-100 text-yellow-800
+                  {% elif request.status == 'rejected' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ request.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ request.submitted_at }}</p>
+              </div>
+            </div>
+            {% if request.reason %}
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ request.reason }}</p>
+            {% endif %}
+            <div class="flex space-x-2 mt-3">
+              <a href="/employee/leave/{{ request.id }}" class="text-blue-500 hover:text-blue-600 text-sm font-medium">
+                View Details →
+              </a>
+              {% if request.status == 'pending' %}
+              <button class="text-red-500 hover:text-red-600 text-sm font-medium">
+                Cancel Request
+              </button>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📅</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Leave Requests</h3>
+          <p class="text-gray-600 dark:text-gray-400">You haven't submitted any leave requests yet.</p>
+          <a href="/employee/leave" class="inline-block mt-4 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+            Submit Your First Request
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Timesheet Tab -->
+    <div id="timesheet-content" class="tab-content hidden p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">Your Timesheet</h2>
+        <a href="/employee/timesheet" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+          Update Timesheet
+        </a>
+      </div>
+      
+      {% if timesheets %}
+        <div class="space-y-4">
+          {% for timesheet in timesheets %}
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ timesheet.week_of }}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">{{ timesheet.total_hours }} hours</p>
+              </div>
+              <div class="text-right">
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                  {% if timesheet.status == 'approved' %}bg-green-100 text-green-800
+                  {% elif timesheet.status == 'pending' %}bg-yellow-100 text-yellow-800
+                  {% elif timesheet.status == 'rejected' %}bg-red-100 text-red-800
+                  {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ timesheet.status|title }}
+                </span>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ timesheet.submitted_at }}</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-7 gap-2 mt-3 text-xs">
+              <div class="text-center">
+                <div class="font-medium">Mon</div>
+                <div class="text-gray-600">{{ timesheet.monday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Tue</div>
+                <div class="text-gray-600">{{ timesheet.tuesday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Wed</div>
+                <div class="text-gray-600">{{ timesheet.wednesday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Thu</div>
+                <div class="text-gray-600">{{ timesheet.thursday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Fri</div>
+                <div class="text-gray-600">{{ timesheet.friday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Sat</div>
+                <div class="text-gray-600">{{ timesheet.saturday|default('0') }}h</div>
+              </div>
+              <div class="text-center">
+                <div class="font-medium">Sun</div>
+                <div class="text-gray-600">{{ timesheet.sunday|default('0') }}h</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">⏰</div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">No Timesheets Available</h3>
+          <p class="text-gray-600 dark:text-gray-400">Your timesheet entries will appear here.</p>
+          <a href="/employee/timesheet" class="inline-block mt-4 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+            Start Logging Time
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active', 'border-primary', 'text-primary'));
+      tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-500'));
+      contents.forEach(c => c.classList.add('hidden'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('active', 'border-primary', 'text-primary');
+      tab.classList.remove('border-transparent', 'text-gray-500');
+
+      // Show corresponding content
+      const targetId = tab.id.replace('-tab', '-content');
+      document.getElementById(targetId).classList.remove('hidden');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+</script>
+{% endblock %} 

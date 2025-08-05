@@ -1,0 +1,119 @@
+{% extends "admin_layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-primary mb-4">📚 Add New Course</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Create a new learning course</p>
+  </div>
+
+  <!-- Add Course Form -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
+    <form method="POST" class="space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course Title</label>
+          <input type="text" id="title" name="title" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+          <select id="category" name="category" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Select Category</option>
+            <option value="Technical Skills">Technical Skills</option>
+            <option value="Soft Skills">Soft Skills</option>
+            <option value="Leadership">Leadership</option>
+            <option value="Compliance">Compliance</option>
+            <option value="Productivity">Productivity</option>
+            <option value="Communication">Communication</option>
+            <option value="Management">Management</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="instructor" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Instructor</label>
+          <input type="text" id="instructor" name="instructor" required
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="duration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration (hours)</label>
+          <input type="number" id="duration" name="duration" required min="1"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+        
+        <div>
+          <label for="difficulty" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Difficulty Level</label>
+          <select id="difficulty" name="difficulty" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="">Select Difficulty</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Expert">Expert</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="badge" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Badge Awarded</label>
+          <input type="text" id="badge" name="badge"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                 placeholder="e.g., Python Expert, Leadership Master">
+        </div>
+      </div>
+      
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course Description</label>
+        <textarea id="description" name="description" rows="4" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                  placeholder="Describe what this course covers and what learners will gain..."></textarea>
+      </div>
+      
+      <div>
+        <label for="objectives" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Learning Objectives</label>
+        <textarea id="objectives" name="objectives" rows="3"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                  placeholder="List the key learning objectives for this course..."></textarea>
+      </div>
+      
+      <div>
+        <label for="prerequisites" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prerequisites</label>
+        <textarea id="prerequisites" name="prerequisites" rows="2"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white"
+                  placeholder="Any prerequisites or recommended background..."></textarea>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+          <select id="status" name="status" required
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+            <option value="Draft">Draft</option>
+            <option value="Active">Active</option>
+            <option value="Archived">Archived</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="max_participants" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Participants</label>
+          <input type="number" id="max_participants" name="max_participants" min="1"
+                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-800 dark:text-white">
+        </div>
+      </div>
+      
+      <div class="flex space-x-4 pt-6">
+        <a href="/admin/learning" 
+           class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center">
+          Cancel
+        </a>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+          Create Course
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

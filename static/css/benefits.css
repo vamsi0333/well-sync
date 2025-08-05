@@ -1,0 +1,97 @@
+/* Premium Benefits Card Styles */
+.benefit-card {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.benefit-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.benefit-card:hover::before {
+    opacity: 1;
+}
+
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+}
+
+.image-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-wrapper:hover::after {
+    opacity: 1;
+}
+
+.benefit-image {
+    transform-origin: center;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.benefit-card:hover .benefit-image {
+    transform: scale(1.05);
+}
+
+/* Premium Button Styles */
+.premium-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.premium-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translate(-50%, -50%) rotate(45deg) translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.premium-button:hover::before {
+    transform: translate(-50%, -50%) rotate(45deg) translateX(100%);
+}
+
+/* Status Badge Styles */
+.status-badge {
+    position: relative;
+    overflow: hidden;
+}
+
+.status-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}

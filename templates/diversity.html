@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+    <h1 class="text-4xl font-bold mb-8">Diversity and Inclusion</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+        <div>
+            <h2 class="text-3xl font-semibold mb-6">Our Commitment</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+                At NexlQon, diversity and inclusion are more than just words – they're the principles that guide how we build our teams, cultivate leaders, and create a culture where everyone belongs and can do their best work.
+            </p>
+            <div class="bg-purple-100 dark:bg-purple-900 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">Key Initiatives</h3>
+                <ul class="space-y-3">
+                    <li>✓ Employee Resource Groups</li>
+                    <li>✓ Inclusive Hiring Practices</li>
+                    <li>✓ Diversity Training Programs</li>
+                    <li>✓ Mentorship Opportunities</li>
+                </ul>
+            </div>
+        </div>
+        <img src="/static/images/diversity.jpg" alt="Diversity at NexlQon" class="rounded-xl shadow-2xl w-full h-[400px] object-cover">
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Employee Resource Groups -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Employee Resource Groups</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                Our ERGs provide support, networking opportunities, and professional development for diverse communities within NexlQon.
+            </p>
+        </div>
+
+        <!-- Inclusive Leadership -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Inclusive Leadership</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                We develop leaders who understand the value of diverse perspectives and create inclusive environments where all team members can thrive.
+            </p>
+        </div>
+
+        <!-- Community Outreach -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 class="text-2xl font-semibold mb-4">Community Outreach</h3>
+            <p class="text-gray-600 dark:text-gray-300">
+                We actively engage with diverse communities through partnerships, internships, and educational programs to build a more inclusive tech industry.
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-16">
+        <h2 class="text-3xl font-bold mb-6">Our Progress</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600">45%</div>
+                    <p class="mt-2">Women in Leadership</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600">60+</div>
+                    <p class="mt-2">Nationalities</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600">12</div>
+                    <p class="mt-2">ERGs</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-purple-600">100%</div>
+                    <p class="mt-2">Pay Equity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-16 text-center">
+        <h2 class="text-3xl font-bold mb-6">Join Our Diverse Team</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+            We're always looking for talented individuals who bring unique perspectives and experiences to our team.
+        </p>
+        <a href="/careers" class="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+            Explore Opportunities
+        </a>
+    </div>
+</div>
+{% endblock %}

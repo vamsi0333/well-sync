@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">System Status</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Monitor the health and performance of all IT services</p>
+  </div>
+
+  <!-- System Status Cards -->
+    <section class="space-y-4">
+      {% for service in systems %}
+      <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300">
+        <div class="flex justify-between items-center">
+          <div class="flex-1">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ service.name }}</h2>
+            <p class="text-gray-600 dark:text-gray-400">{{ service.description }}</p>
+          </div>
+          <div class="ml-4">
+            <span class="px-4 py-2 rounded-full text-sm font-semibold shadow-lg
+              {% if service.status == 'Operational' %}
+                bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+              {% elif service.status == 'Degraded' %}
+                bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+              {% else %}
+                bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+              {% endif %}">
+              <span class="inline-block w-2 h-2 rounded-full mr-2
+                {% if service.status == 'Operational' %}bg-green-500
+                {% elif service.status == 'Degraded' %}bg-yellow-500
+                {% else %}bg-red-500{% endif %}"></span>
+            {{ service.status }}
+          </span>
+          </div>
+        </div>
+        </div>
+      {% else %}
+      <div class="bg-white/90 dark:bg-gray-900/90 p-8 rounded-2xl shadow-xl backdrop-blur text-center">
+        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <p class="text-gray-500 dark:text-gray-400 text-lg">No service status available.</p>
+      </div>
+      {% endfor %}
+    </section>
+
+  <!-- AI Assistant Widget -->
+  <div id="assistantWidget" class="fixed bottom-6 right-6 w-80 bg-white/95 dark:bg-gray-900/95 rounded-2xl shadow-2xl backdrop-blur border border-gray-200 dark:border-gray-700 z-50">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 flex items-center">
+        <span class="mr-2">🤖</span> IT Assistant
+      </h3>
+      <p class="text-sm text-gray-600 dark:text-gray-400">Ask me anything about IT support</p>
+    </div>
+    <div class="p-4">
+      <form id="aiForm" class="space-y-3">
+        <textarea id="aiInput" rows="3" placeholder="How can I reset my VPN password?"
+          class="w-full p-3 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
+        <button type="submit" id="ai-submit-btn"
+          class="w-full bg-gradient-to-r from-primary to-accent text-white py-2 rounded-lg font-semibold shadow hover:shadow-lg transition flex items-center justify-center gap-2">
+          <span id="ai-btn-text">Ask Assistant</span>
+          <svg id="ai-spinner" class="w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+          </svg>
+        </button>
+    </form>
+      <div id="aiResponse" class="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300 hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const aiForm = document.getElementById('aiForm');
+    const aiInput = document.getElementById('aiInput');
+    const aiResponse = document.getElementById('aiResponse');
+    const aiSubmitBtn = document.getElementById('ai-submit-btn');
+    const aiBtnText = document.getElementById('ai-btn-text');
+    const aiSpinner = document.getElementById('ai-spinner');
+
+    aiForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = aiInput.value.trim();
+      
+      if (!question) return;
+
+      // Show loading state
+      aiBtnText.classList.add('hidden');
+      aiSpinner.classList.remove('hidden');
+      aiSubmitBtn.disabled = true;
+
+      try {
+        const res = await fetch('/api/ai-assistant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        
+        // Show response
+        aiResponse.textContent = data.answer;
+        aiResponse.classList.remove('hidden');
+        
+      } catch (error) {
+        console.error('Error:', error);
+        aiResponse.textContent = 'Sorry, I encountered an error. Please try again.';
+        aiResponse.classList.remove('hidden');
+      } finally {
+        // Reset loading state
+        aiBtnText.classList.remove('hidden');
+        aiSpinner.classList.add('hidden');
+        aiSubmitBtn.disabled = false;
+      }
+    });
+  </script>
+</div>
+{% endblock %}
+

@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Your Tickets</h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400">Track and manage your support requests</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+      <a href="/submit-ticket" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Submit New Ticket
+      </a>
+    </div>
+  </div>
+
+  {% if tickets %}
+    <div class="space-y-4">
+      {% for ticket in tickets %}
+        <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+            <div class="flex-1">
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ ticket.title }}</h2>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <!-- Priority Badge -->
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+                  {% if ticket.priority == 'high' %}
+                    bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                  {% elif ticket.priority == 'medium' %}
+                    bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                  {% else %}
+                    bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                  {% endif %}">
+                  <span class="w-2 h-2 rounded-full mr-2
+                    {% if ticket.priority == 'high' %}bg-red-500
+                    {% elif ticket.priority == 'medium' %}bg-yellow-500
+                    {% else %}bg-green-500{% endif %}"></span>
+                  {{ ticket.priority|capitalize }} Priority
+            </span>
+                
+                <!-- Status Badge -->
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+                  {% if ticket.status == 'resolved' %}
+                    bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                  {% elif ticket.status == 'pending' %}
+                    bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                  {% else %}
+                    bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                  {% endif %}">
+                  <span class="w-2 h-2 rounded-full mr-2
+                    {% if ticket.status == 'resolved' %}bg-green-500
+                    {% elif ticket.status == 'pending' %}bg-yellow-500
+                    {% else %}bg-blue-500{% endif %}"></span>
+              {{ ticket.status|capitalize }}
+            </span>
+              </div>
+              {% if ticket.description %}
+                <p class="text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">{{ ticket.description }}</p>
+              {% endif %}
+              <p class="text-gray-600 dark:text-gray-400 text-sm">
+                <span class="font-medium">Created:</span> {{ ticket.date }}
+              </p>
+            </div>
+            <div class="mt-4 sm:mt-0 sm:ml-4">
+              <a href="/ticket/{{ ticket.id }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary to-primary-dark text-white font-medium rounded-lg shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                View Details
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white/90 dark:bg-gray-900/90 p-12 rounded-2xl shadow-xl backdrop-blur text-center">
+      <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Tickets Yet</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">You haven't submitted any support tickets yet.</p>
+      <a href="/submit-ticket" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Submit Your First Ticket
+      </a>
+    </div>
+  {% endif %}
+  </div>
+{% endblock %}

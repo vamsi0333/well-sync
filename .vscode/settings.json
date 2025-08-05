@@ -1,0 +1,13 @@
+{
+    "python.defaultInterpreterPath": "/opt/anaconda3/bin/python",
+    "python.terminal.activateEnvironment": false,
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true
+    },
+    "python.analysis.extraPaths": [
+        "."
+    ],
+    "terminal.integrated.cwd": "${workspaceFolder}"
+} 

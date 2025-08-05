@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="max-w-xl mx-auto space-y-10">
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">📝</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">AI Resume Optimizer</h1>
+      <p class="text-lg text-white/90">Upload your resume and get instant feedback and AI-powered rewrites tailored to your dream job.</p>
+    </div>
+  </div>
+  <form method="post" enctype="multipart/form-data" class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 space-y-6 animate-fade-in">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Upload Resume (PDF or DOCX)</label>
+      <input type="file" name="resume" accept=".pdf,.doc,.docx" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+    </div>
+    <div class="flex justify-end mt-8">
+      <button type="submit" class="px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Optimize Resume</button>
+    </div>
+  </form>
+  {% if feedback %}
+  <div class="mt-8 bg-green-100 dark:bg-green-900 rounded-xl p-6 text-green-900 dark:text-green-100 shadow animate-fade-in">
+    <div class="font-bold mb-2">AI Feedback:</div>
+    <div>{{ feedback }}</div>
+  </div>
+  {% endif %}
+  {% if optimized_resume %}
+  <div class="mt-8 bg-blue-100 dark:bg-blue-900 rounded-xl p-6 text-blue-900 dark:text-blue-100 shadow animate-fade-in">
+    <div class="font-bold mb-2">AI Rewrite:</div>
+    <div>{{ optimized_resume }}</div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,171 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Onboarding Details</h1>
+        <p class="text-gray-600 dark:text-gray-400">Manage onboarding process for {{ onboarding.employee_name }}</p>
+      </div>
+      <a href="{{ url_for('admin_onboarding') }}" 
+         class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
+        Back to Onboarding
+      </a>
+    </div>
+  </div>
+
+  <!-- Employee Info -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Employee Information</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.employee_name }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.employee_email }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Department</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.department or 'Not specified' }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Position</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.position or 'Not specified' }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Start Date</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.start_date or 'Not specified' }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold
+          {% if onboarding.status == 'in_progress' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+          {% elif onboarding.status == 'completed' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+          {% elif onboarding.status == 'on_hold' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+          {% else %}bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200{% endif %}">
+          {{ onboarding.status|replace('_', ' ')|title }}
+        </span>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Created</label>
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ onboarding.created_at }}</p>
+      </div>
+      
+      <div>
+        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Progress</label>
+        {% set required_tasks = tasks|selectattr('required', 'equalto', true)|list %}
+        {% set completed_required = onboarding.completed_tasks|length %}
+        {% set total_required = required_tasks|length %}
+        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ completed_required }}/{{ total_required }} Required Tasks</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding Tasks -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Onboarding Tasks</h2>
+    
+    <div class="space-y-4">
+      {% for task in tasks %}
+      <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 {% if task.id in onboarding.completed_tasks %}bg-green-50 dark:bg-green-900/20{% endif %}">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="flex items-center mb-2">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mr-3">{{ task.title }}</h3>
+              {% if task.required %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                  Required
+                </span>
+              {% else %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  Optional
+                </span>
+              {% endif %}
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mb-2">{{ task.description }}</p>
+            <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+              <span class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                {{ task.category }}
+              </span>
+              <span class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ task.estimated_time }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            {% if task.id in onboarding.completed_tasks %}
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Completed
+              </span>
+            {% else %}
+              <form method="POST" action="{{ url_for('complete_onboarding_task', onboarding_id=onboarding.id, task_id=task.id) }}" class="inline">
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition duration-200">
+                  Mark Complete
+                </button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Status Update -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Update Status</h2>
+    
+    <form method="POST" action="{{ url_for('update_onboarding_status', onboarding_id=onboarding.id) }}" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Status
+          </label>
+          <select name="status" id="status" 
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="in_progress" {% if onboarding.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="on_hold" {% if onboarding.status == 'on_hold' %}selected{% endif %}>On Hold</option>
+            <option value="completed" {% if onboarding.status == 'completed' %}selected{% endif %}>Completed</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Notes
+          </label>
+          <textarea name="notes" id="notes" rows="3"
+                    placeholder="Add any notes or comments about this onboarding process..."
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none">{{ onboarding.notes }}</textarea>
+        </div>
+      </div>
+      
+      <div class="flex justify-end">
+        <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+          Update Status
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,31 @@
+{
+    "folders": [
+        {
+            "name": "IT Portal with AI",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "python.defaultInterpreterPath": "/opt/anaconda3/bin/python",
+        "python.terminal.activateEnvironment": false,
+        "terminal.integrated.cwd": "${workspaceFolder}",
+        "files.exclude": {
+            "**/__pycache__": true,
+            "**/*.pyc": true,
+            "**/.DS_Store": true
+        }
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Launch Main App",
+                "type": "python",
+                "request": "launch",
+                "program": "${workspaceFolder}/app.py",
+                "console": "integratedTerminal",
+                "cwd": "${workspaceFolder}"
+            }
+        ]
+    }
+} 

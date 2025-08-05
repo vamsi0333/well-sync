@@ -1,0 +1,573 @@
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, abort
+from datetime import datetime
+import io
+import os
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey'
+
+# --- DEMO DATA ---
+tickets = [
+    {"id": 1, "title": "Printer not connecting", "priority": "high", "status": "open", "date": "2025-07-18", "description": "Printer shows offline status", "user_email": "employee@example.com", "attachments": []},
+    {"id": 2, "title": "VPN Login Failure", "priority": "medium", "status": "pending", "date": "2025-07-19", "description": "Cannot connect to VPN", "user_email": "employee@example.com", "attachments": []}
+]
+requests_data = [
+    {"id": 1, "type": "hardware", "subject": "Need a new mouse", "description": "Mouse disconnecting.", "status": "pending", "submitted_by": "employee@example.com", "hr_comment": "We'll issue one next week.", "attachments": []}
+]
+user_profiles = {
+    "employee@example.com": {"name": "John Doe", "email": "employee@example.com", "department": "Engineering", "role": "employee"},
+    "hr@example.com": {"name": "HR Manager", "email": "hr@example.com", "department": "HR", "role": "hr"}
+}
+comments = {
+    1: [{"author": "employee@example.com", "message": "I tried rebooting it.", "timestamp": "2025-07-18 09:45", "author_type": "employee"}],
+    2: []
+}
+devices = [
+    {"id": 1, "name": "Dell XPS 13", "type": "Laptop", "assigned_to": "employee@example.com", "status": "lent", "lent_date": "2025-07-01", "return_date": "", "notes": "For remote work"},
+    {"id": 2, "name": "iPhone 13", "type": "Phone", "assigned_to": "", "status": "available", "lent_date": "", "return_date": "", "notes": ""}
+]
+notifications = []
+
+def admin_required():
+    if session.get('role') not in ['hr', 'admin']:
+        abort(403)
+
+@app.route('/')
+def home():
+    if 'user' in session:
+        return redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Only allow two emails: employee@example.com and hr@example.com
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        if email == 'employee@example.com':
+            session['user'] = email
+            session['name'] = 'Employee'
+            session['role'] = 'employee'
+            flash('Welcome back, Employee!', 'success')
+            return redirect(url_for('dashboard'))
+        elif email == 'hr@example.com':
+            session['user'] = email
+            session['name'] = 'HR'
+            session['role'] = 'hr'
+            flash('Welcome back, HR!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid email. Use employee@example.com or hr@example.com.', 'error')
+            return render_template('login.html')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop("user", None)
+    session.pop("role", None)
+    flash("Logged out.", "info")
+    return redirect(url_for("login"))
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        if request.form["password"] != request.form["confirm"]:
+            flash("Passwords do not match.", "error")
+        else:
+            flash("Registered successfully!", "success")
+            return redirect(url_for("login"))
+    return render_template("register.html")
+
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        flash(f"Reset link sent to {request.form['email']}", "info")
+        return redirect(url_for("login"))
+    return render_template("forgot_password.html")
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    if session.get('role') == 'hr':
+        return redirect(url_for('admin_dashboard'))
+    dashboard_data = {
+        'open_tickets': len([t for t in tickets if t['status'] == 'open' and t.get('user_email') == session['user']]),
+        'resolved_tickets': len([t for t in tickets if t['status'] == 'resolved' and t.get('user_email') == session['user']]),
+        'avg_resolution_time': '2.1 hrs',
+        'system_status': [
+            {'service': 'Email Server', 'status': '🟢 Operational'},
+            {'service': 'VPN Gateway', 'status': '🟢 Operational'},
+            {'service': 'Printer Network', 'status': '🟡 Degraded'},
+            {'service': 'Remote Desktop', 'status': '🔴 Down'},
+        ]
+    }
+    return render_template('dashboard.html', **dashboard_data)
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'user' not in session or session.get('role') != 'hr':
+        return redirect(url_for('login'))
+    admin_data = {
+        'total_tickets': len(tickets),
+        'open_tickets': len([t for t in tickets if t['status'] == 'open']),
+        'resolved_tickets': len([t for t in tickets if t['status'] == 'resolved']),
+        'total_requests': len(requests_data),
+        'pending_requests': len([r for r in requests_data if r['status'] == 'pending']),
+        'total_users': len(user_profiles),
+        'recent_tickets': tickets[-5:] if len(tickets) > 5 else tickets,
+        'recent_requests': requests_data[-5:] if len(requests_data) > 5 else requests_data
+    }
+    return render_template('admin_dashboard.html', **admin_data)
+
+@app.route("/admin/tickets")
+def admin_tickets():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    # Get filter parameters
+    status_filter = request.args.get("status", "")
+    priority_filter = request.args.get("priority", "")
+    search_query = request.args.get("search", "")
+    
+    filtered_tickets = tickets
+    
+    if status_filter:
+        filtered_tickets = [t for t in filtered_tickets if t["status"] == status_filter]
+    
+    if priority_filter:
+        filtered_tickets = [t for t in filtered_tickets if t["priority"] == priority_filter]
+    
+    if search_query:
+        filtered_tickets = [t for t in filtered_tickets if search_query.lower() in t["title"].lower() or search_query.lower() in t.get("description", "").lower()]
+    
+    return render_template("admin_tickets.html", tickets=filtered_tickets)
+
+@app.route("/admin/requests")
+def admin_requests():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    # Get filter parameters
+    status_filter = request.args.get("status", "")
+    type_filter = request.args.get("type", "")
+    search_query = request.args.get("search", "")
+    
+    filtered_requests = requests_data
+    
+    if status_filter:
+        filtered_requests = [r for r in filtered_requests if r["status"] == status_filter]
+    
+    if type_filter:
+        filtered_requests = [r for r in filtered_requests if r["type"] == type_filter]
+    
+    if search_query:
+        filtered_requests = [r for r in filtered_requests if search_query.lower() in r["subject"].lower() or search_query.lower() in r.get("description", "").lower()]
+    
+    return render_template("admin_requests.html", requests=filtered_requests)
+
+@app.route("/admin/update-ticket-status/<int:ticket_id>", methods=["POST"])
+def update_ticket_status(ticket_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    new_status = request.form["status"]
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    
+    if ticket:
+        old_status = ticket["status"]
+        ticket["status"] = new_status
+        
+        # Add notification
+        add_notification(ticket["user_email"], f"Your ticket '{ticket['title']}' status changed from {old_status} to {new_status}")
+        
+        # Send email notification
+        send_email_notification(ticket["user_email"], "Ticket Status Updated", 
+                              f"Your ticket '{ticket['title']}' status has been updated to {new_status}")
+        
+        flash(f"Ticket status updated to {new_status}", "success")
+    
+    return redirect(url_for("admin_tickets"))
+
+@app.route("/admin/update-request-status/<int:request_id>", methods=["POST"])
+def update_request_status(request_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    new_status = request.form["status"]
+    request_item = next((r for r in requests_data if r["id"] == request_id), None)
+    
+    if request_item:
+        old_status = request_item["status"]
+        request_item["status"] = new_status
+        
+        # Add notification
+        add_notification(request_item["submitted_by"], f"Your request '{request_item['subject']}' status changed from {old_status} to {new_status}")
+        
+        # Send email notification
+        send_email_notification(request_item["submitted_by"], "Request Status Updated", 
+                              f"Your request '{request_item['subject']}' status has been updated to {new_status}")
+        
+        flash(f"Request status updated to {new_status}", "success")
+    
+    return redirect(url_for("admin_requests"))
+
+@app.route("/admin/add-hr-comment/<int:request_id>", methods=["POST"])
+def add_hr_comment(request_id):
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    comment = request.form["hr_comment"]
+    request_item = next((r for r in requests_data if r["id"] == request_id), None)
+    
+    if request_item:
+        request_item["hr_comment"] = comment
+        
+        # Add notification
+        add_notification(request_item["submitted_by"], f"HR comment added to your request '{request_item['subject']}'")
+        
+        # Send email notification
+        send_email_notification(request_item["submitted_by"], "HR Comment Added", 
+                              f"An HR comment has been added to your request '{request_item['subject']}': {comment}")
+        
+        flash("HR comment added successfully", "success")
+    
+    return redirect(url_for("admin_requests"))
+
+@app.route("/tickets")
+def view_tickets():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if session.get("role") == "admin":
+        return redirect(url_for("admin_tickets"))
+
+    user_tickets = [t for t in tickets if t["user_email"] == session["user"]]
+    return render_template("tickets.html", tickets=user_tickets)
+
+@app.route("/submit-ticket", methods=["GET", "POST"])
+def submit_ticket():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        new_ticket = {
+            "id": len(tickets) + 1,
+            "title": request.form["title"],
+            "priority": request.form["priority"],
+            "status": "open",
+            "date": request.form["date"],
+            "description": request.form.get("description", ""),
+            "user_email": session["user"],
+            "attachments": []
+        }
+        
+        # Handle file uploads
+        if 'attachments' in request.files:
+            files = request.files.getlist('attachments')
+            for file in files:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    new_ticket["attachments"].append(filename)
+        
+        tickets.append(new_ticket)
+        
+        # Add notification for admin
+        add_notification("admin@example.com", f"New ticket submitted: {new_ticket['title']}", "warning")
+        
+        flash("Ticket submitted!", "success")
+        return redirect(url_for("view_tickets"))
+    
+    return render_template("submit_ticket.html")
+
+@app.route("/ticket/<int:ticket_id>")
+def ticket_detail(ticket_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if not ticket:
+        flash("Not found.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    # Check if user can view this ticket
+    if session.get("role") != "admin" and ticket["user_email"] != session["user"]:
+        flash("Access denied.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    return render_template("ticket_details.html", ticket=ticket, comments=comments.get(ticket_id, []))
+
+@app.route("/ticket/<int:ticket_id>/comment", methods=["POST"])
+def add_comment(ticket_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    ticket = next((t for t in tickets if t["id"] == ticket_id), None)
+    if not ticket:
+        flash("Ticket not found.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    # Check if user can comment on this ticket
+    if session.get("role") != "admin" and ticket["user_email"] != session["user"]:
+        flash("Access denied.", "error")
+        return redirect(url_for("view_tickets"))
+    
+    comment_data = {
+        "author": session["user"],
+        "message": request.form["message"],
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "author_type": session.get("role", "user")
+    }
+    
+    comments.setdefault(ticket_id, []).append(comment_data)
+    
+    # Add notification for other party
+    if session.get("role") == "admin":
+        add_notification(ticket["user_email"], f"Admin commented on your ticket: {ticket['title']}")
+    else:
+        add_notification("admin@example.com", f"User commented on ticket: {ticket['title']}")
+    
+    flash("Comment added.", "success")
+    return redirect(url_for("ticket_detail", ticket_id=ticket_id))
+
+@app.route("/submit-request", methods=["GET", "POST"])
+def submit_request():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        new_request = {
+            "id": len(requests_data) + 1,
+            "type": request.form["type"],
+            "subject": request.form["subject"],
+            "description": request.form["description"],
+            "submitted_by": session["user"],
+            "status": "pending",
+            "attachments": []
+        }
+        
+        # Handle file uploads
+        if 'attachments' in request.files:
+            files = request.files.getlist('attachments')
+            for file in files:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    new_request["attachments"].append(filename)
+        
+        requests_data.append(new_request)
+        
+        # Add notification for admin
+        add_notification("admin@example.com", f"New request submitted: {new_request['subject']}", "warning")
+        
+        flash("Request submitted.", "success")
+        return redirect(url_for("dashboard"))
+    
+    return render_template("submit_request.html", prefill_type=request.args.get("type", ""))
+
+@app.route("/request-history")
+def request_history():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    if session.get("role") == "admin":
+        return redirect(url_for("admin_requests"))
+    
+    user_requests = [r for r in requests_data if r["submitted_by"] == session["user"]]
+    return render_template("request_history.html", requests=user_requests)
+
+@app.route("/cancel-request/<int:req_id>", methods=["POST"])
+def cancel_request(req_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    for r in requests_data:
+        if r["id"] == req_id and (r["submitted_by"] == session["user"] or session.get("role") == "admin"):
+            r["status"] = "cancelled"
+            break
+    
+    flash("Request cancelled.", "info")
+    return redirect(url_for("request_history"))
+
+@app.route("/notifications")
+def view_notifications():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    user_notifications = [n for n in notifications if n["user_email"] == session["user"]]
+    return render_template("notifications.html", notifications=user_notifications)
+
+@app.route("/notifications/mark-read/<int:notification_id>", methods=["POST"])
+def mark_notification_read(notification_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+    
+    notification = next((n for n in notifications if n["id"] == notification_id and n["user_email"] == session["user"]), None)
+    if notification:
+        notification["read"] = True
+    
+    return redirect(url_for("view_notifications"))
+
+@app.route("/system-status")
+def system_status():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("system_status.html", systems=[
+        {"name": "Email Server", "description": "Handles mail.", "status": "Operational"},
+        {"name": "VPN Gateway", "description": "Remote access", "status": "Operational"},
+        {"name": "Printer Network", "description": "Print queue", "status": "Degraded"},
+        {"name": "Remote Desktop", "description": "Virtual access", "status": "Down"},
+    ])
+
+@app.route("/faqs")
+def faqs():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("faqs.html")
+
+@app.route("/resources")
+def resources():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("resources.html", resources=[
+        {"title": "VPN Client", "description": "VPN install", "link": "#"},
+        {"title": "Email Guide", "description": "Setup email", "link": "#"}
+    ])
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    user = user_profiles.get(session["user"])
+    if request.method == "POST":
+        user["name"] = request.form["name"]
+        user["department"] = request.form["department"]
+        flash("Profile updated", "success")
+    return render_template("profile.html", user=user)
+
+@app.route("/catalog")
+def catalog():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("catalog.html")
+
+@app.route("/api/ai-assistant", methods=["POST"])
+def ai_assistant():
+    q = request.get_json().get("question", "").lower()
+    responses = {
+        "reset vpn": "Try disconnecting/reconnecting.",
+        "email not working": "Try logging out/in.",
+        "forgot password": "Click 'Forgot Password'.",
+        "printer not working": "Try rebooting the printer."
+    }
+    for k in responses:
+        if k in q:
+            return jsonify({"answer": responses[k]})
+    return jsonify({"answer": "Not sure. Please submit a ticket."})
+
+@app.route('/devices', methods=['GET', 'POST'])
+def device_list():
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        new_device = {
+            'id': len(devices) + 1,
+            'name': request.form['name'],
+            'type': request.form['type'],
+            'assigned_to': '',
+            'status': 'available',
+            'lent_date': '',
+            'return_date': '',
+            'notes': request.form.get('notes', '')
+        }
+        devices.append(new_device)
+        flash('Device added!', 'success')
+        return redirect(url_for('device_list'))
+    return render_template('devices.html', devices=devices)
+
+@app.route('/devices/lend/<int:device_id>', methods=['POST'])
+def lend_device(device_id):
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    device = next((d for d in devices if d['id'] == device_id), None)
+    if device and device['status'] == 'available':
+        device['assigned_to'] = request.form['assigned_to']
+        device['status'] = 'lent'
+        device['lent_date'] = request.form['lent_date']
+        device['return_date'] = ''
+        device['notes'] = request.form.get('notes', device['notes'])
+        flash('Device lent out!', 'success')
+    else:
+        flash('Device not available.', 'error')
+    return redirect(url_for('device_list'))
+
+@app.route('/devices/return/<int:device_id>', methods=['POST'])
+def return_device(device_id):
+    if session.get('role') != 'admin':
+        flash('Admin access required.', 'error')
+        return redirect(url_for('dashboard'))
+    device = next((d for d in devices if d['id'] == device_id), None)
+    if device and device['status'] == 'lent':
+        device['status'] = 'available'
+        device['return_date'] = request.form['return_date']
+        device['assigned_to'] = ''
+        flash('Device marked as returned!', 'success')
+    else:
+        flash('Device not currently lent.', 'error')
+    return redirect(url_for('device_list'))
+
+@app.route('/timesheet', methods=['GET', 'POST'])
+def timesheet():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    # Demo: just render the template
+    return render_template('timesheet.html')
+
+@app.route('/leave', methods=['GET', 'POST'])
+def leave():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('leave.html')
+
+@app.route('/careers', methods=['GET', 'POST'])
+def careers():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('careers.html')
+
+@app.route('/benefits', methods=['GET', 'POST'])
+def benefits():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('benefits.html')
+
+@app.route('/paystubs', methods=['GET', 'POST'])
+def paystubs():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('paystubs.html')
+
+@app.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('feedback.html')
+
+@app.route('/complimentary', methods=['GET', 'POST'])
+def complimentary():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('complimentary.html')
+
+@app.route('/help', methods=['GET', 'POST'])
+def help_page():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    return render_template('help.html')
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)

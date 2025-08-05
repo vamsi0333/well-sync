@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- Header Section -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Service Catalog</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">Browse and request IT services and support</p>
+  </div>
+
+  <!-- Service Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Hardware Request -->
+    <div class="group bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">🖥️</span>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Request New Laptop</h2>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">Apply for a hardware upgrade or replacement device for improved productivity.</p>
+      <a href="/submit-request?type=hardware" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition group-hover:translate-x-1">
+        Submit Request
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Access Permissions -->
+    <div class="group bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">🔐</span>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Access Permissions</h2>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">Need access to a system, folder, or admin panel? Request permissions here.</p>
+      <a href="/submit-request?type=access" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition group-hover:translate-x-1">
+        Request Access
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Software Installation -->
+    <div class="group bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">💾</span>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Software Installation</h2>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">Install company-approved tools like Adobe Creative Suite, VS Code, or other software.</p>
+      <a href="/submit-request?type=software" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition group-hover:translate-x-1">
+        Install Software
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Accessories Request -->
+    <div class="group bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">📦</span>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Request Accessories</h2>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">Request cables, keyboards, docking stations, monitors, and other accessories.</p>
+      <a href="/submit-request?type=hardware" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition group-hover:translate-x-1">
+        Request Accessories
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Custom Support -->
+    <div class="group bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">🧾</span>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Custom Support</h2>
+      </div>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">Need something else? Send a custom request to our IT support team.</p>
+      <a href="/submit-request?type=other" class="inline-flex items-center text-primary font-semibold hover:text-primary-dark transition group-hover:translate-x-1">
+        Submit Custom Request
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Quick Support -->
+    <div class="group bg-gradient-to-br from-primary to-accent p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+          <span class="text-2xl">🚀</span>
+        </div>
+        <h2 class="text-xl font-bold text-white">Quick Support</h2>
+      </div>
+      <p class="text-white/90 mb-6 leading-relaxed">Need immediate help? Contact our IT support team directly for urgent issues.</p>
+      <a href="/submit-ticket" class="inline-flex items-center text-white font-semibold hover:text-white/80 transition group-hover:translate-x-1">
+        Get Quick Help
+        <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Additional Info Section -->
+  <div class="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-xl backdrop-blur border border-gray-200 dark:border-gray-700">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Need Help?
+    </h3>
+    <p class="text-gray-600 dark:text-gray-400 mb-4">Can't find what you're looking for? Our IT support team is here to help with any questions or special requests.</p>
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a href="/faqs" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Browse FAQs
+      </a>
+      <a href="/assistant" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-medium rounded-lg shadow hover:shadow-lg transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        Ask AI Assistant
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "employee_portal/layout.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-10">
+  <!-- Hero Card -->
+  <div class="bg-gradient-to-r from-primary to-accent rounded-3xl shadow-xl p-8 flex items-center space-x-6 animate-fade-in">
+    <div class="flex-shrink-0 text-5xl">🤖</div>
+    <div class="flex-1">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-1">Support & Help Center</h1>
+      <p class="text-lg text-white/90">How can we help? Submit a ticket for HR or IT issues and track your requests below.</p>
+    </div>
+  </div>
+
+  <!-- Ticket Submission Form -->
+  <form method="post" class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 space-y-6 animate-fade-in">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+        <input type="text" name="subject" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+        <select name="type" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+          <option value="HR">🧑‍💼 HR</option>
+          <option value="IT">💻 IT</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Urgency</label>
+        <select name="urgency" class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary">
+          <option value="Low">🟢 Low</option>
+          <option value="Medium">🟡 Medium</option>
+          <option value="High">🔴 High</option>
+        </select>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+        <textarea name="description" rows="2" required class="w-full rounded-lg border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary"></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end mt-8">
+      <button type="submit" class="px-6 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-white font-bold shadow hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">Submit Ticket</button>
+    </div>
+  </form>
+
+  <!-- Tickets List -->
+  <div class="mt-12 animate-fade-in">
+    <h2 class="text-2xl font-bold text-primary mb-4 flex items-center"><span class="mr-2">🎫</span> My Tickets</h2>
+    {% if tickets %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for t in tickets|sort(attribute='date', reverse=True) %}
+        <a href="/ticket/{{ t.id }}" class="block bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 space-y-2 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">{% if t.type == 'HR' %}🧑‍💼{% else %}💻{% endif %}</span>
+              <span class="font-semibold text-lg">{{ t.subject }}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold
+              {% if t.status == 'open' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+              {% elif t.status == 'closed' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+              {% endif %}">
+              {{ t.status|capitalize }}
+            </span>
+          </div>
+          <div class="flex items-center space-x-2 text-gray-500 dark:text-gray-400 text-sm">
+            <span>{{ t.date }}</span>
+            <span>•</span>
+            <span class="font-semibold">Urgency: {{ t.urgency }}</span>
+          </div>
+          <div class="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">{{ t.description }}</div>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="flex flex-col items-center justify-center py-16">
+        <div class="text-6xl mb-4">🎫</div>
+        <div class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">No tickets yet</div>
+        <div class="text-gray-500 dark:text-gray-400 mb-4">Submit your first support ticket using the form above!</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

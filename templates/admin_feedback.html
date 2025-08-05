@@ -1,0 +1,231 @@
+{% extends "admin_layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Anonymous Feedback Management</h1>
+    <p class="text-gray-600 dark:text-gray-400">Review and manage anonymous feedback submissions from employees.</p>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Feedback</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ feedback_list|length }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Pending</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ feedback_list|selectattr('status', 'equalto', 'pending')|list|length }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Reviewed</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ feedback_list|selectattr('status', 'equalto', 'reviewed')|list|length }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400">High Priority</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ feedback_list|selectattr('priority', 'equalto', 'high')|list|length + feedback_list|selectattr('priority', 'equalto', 'urgent')|list|length }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback List -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">All Feedback</h2>
+    </div>
+
+    {% if feedback_list %}
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Department</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Priority</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Submitted</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {% for feedback in feedback_list %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+              #{{ feedback.id }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                {{ feedback.type|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+              {{ feedback.department or 'General' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                {% if feedback.priority == 'urgent' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                {% elif feedback.priority == 'high' %}bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
+                {% elif feedback.priority == 'medium' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                {% else %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200{% endif %}">
+                {{ feedback.priority|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold
+                {% if feedback.status == 'pending' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                {% elif feedback.status == 'reviewed' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                {% elif feedback.status == 'in_progress' %}bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                {% else %}bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200{% endif %}">
+                {{ feedback.status|replace('_', ' ')|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              {{ feedback.submitted_at }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <button onclick="viewFeedback({{ feedback.id }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">
+                View
+              </button>
+              <form method="POST" action="{{ url_for('update_feedback_status', feedback_id=feedback.id) }}" class="inline">
+                <select name="status" onchange="this.form.submit()" class="text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                  <option value="pending" {% if feedback.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="in_progress" {% if feedback.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                  <option value="reviewed" {% if feedback.status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                  <option value="resolved" {% if feedback.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-12">
+      <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+      <p class="text-gray-500 dark:text-gray-400">No feedback submissions found</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Feedback Detail Modal -->
+<div id="feedbackModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white dark:bg-gray-800">
+    <div class="mt-3">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Feedback Details</h3>
+        <button onclick="closeFeedbackModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div id="feedbackContent" class="text-gray-700 dark:text-gray-300">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function viewFeedback(feedbackId) {
+  // Find the feedback data
+  const feedbackList = {{ feedback_list|tojson }};
+  const feedback = feedbackList.find(f => f.id === feedbackId);
+  if (!feedback) return;
+  
+  // Populate modal content
+  const content = `
+    <div class="space-y-4">
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Feedback Type:</label>
+        <p class="text-gray-900 dark:text-white">${feedback.type}</p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Department:</label>
+        <p class="text-gray-900 dark:text-white">${feedback.department || 'General'}</p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Priority:</label>
+        <p class="text-gray-900 dark:text-white">${feedback.priority}</p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Status:</label>
+        <p class="text-gray-900 dark:text-white">${feedback.status}</p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Submitted:</label>
+        <p class="text-gray-900 dark:text-white">${feedback.submitted_at}</p>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Feedback:</label>
+        <p class="text-gray-900 dark:text-white mt-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">${feedback.text}</p>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('feedbackContent').innerHTML = content;
+  document.getElementById('feedbackModal').classList.remove('hidden');
+}
+
+function closeFeedbackModal() {
+  document.getElementById('feedbackModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('feedbackModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeFeedbackModal();
+  }
+});
+</script>
+{% endblock %} 
